@@ -1,0 +1,3 @@
+# Online_shop
+work in progress...
+<p>This project is intended to present some of the most important functionalities of an e-commerce application</p>
