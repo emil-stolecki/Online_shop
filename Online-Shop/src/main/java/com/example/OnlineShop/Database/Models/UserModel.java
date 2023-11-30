@@ -16,41 +16,64 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+
+
+/*
+ * This Entity represents the user of the application
+ * When a new user creates an account, a new record is created.
+ * It holds data needed to authenticate the user when they are logging in
+ * and identify the user when they are buying items and leaving reviews
+ * 
+ * It links the user with their role: 
+ * * a regular user/consumer or a member of the staff - a moderator or an admin
+ * * or a banned user with limited permits.
+ * 
+ * One User can have only one role at the time.
+ * 
+ * 
+ * It links the user with their shopping cart and items in it.
+ * One User can have many items in their cart 
+ * Many Users can have the same item in their carts (as long as they are in stock)
+ * 
+ */
 
 @Entity(name="users")
 public class UserModel {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
+	
 	@Column(unique=true) 
 	private String login;
+	
 	@Column(unique=true) 
 	private String email;
+	
 	private String firstName;
 	private String lastName;
+	
 	private String encryptedPassword;
+	
 	@CreationTimestamp
 	private LocalDateTime joined;
-	@ManyToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
-	@JoinTable(
-			name="user_roles",
-			joinColumns= {@JoinColumn(name="user_id",referencedColumnName="id")},
-			inverseJoinColumns = {@JoinColumn(name="role_id",referencedColumnName="id")}
-			)
-	private List<RoleModel> roles=new ArrayList<>();
-	@OneToMany(mappedBy="userId")
-    private List<CartModel> items=new ArrayList<>();
 	
+	@ManyToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
+	@JoinColumn(name="id")
+	private RoleModel role=new RoleModel();
 	
+	@OneToMany(mappedBy="userId", fetch = FetchType.LAZY)
+    private List<ItemInCartModel> items=new ArrayList<>();
+	
+	@OneToMany(mappedBy="userId", fetch = FetchType.LAZY)
+	private List<ReviewModel> reviews=new ArrayList<>();
 	
 	
 	public Long getId() {
 		return id;
 	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+	
 	public String getLogin() {
 		return login;
 	}
@@ -87,11 +110,26 @@ public class UserModel {
 	public void setJoined(LocalDateTime joined) {
 		this.joined = joined;
 	}
-	public List<RoleModel> getRoles() {
-		return roles;
+	public RoleModel getRole() {
+		return role;
 	}
-	public void setProducts(List<RoleModel> roles) {
-		this.roles = roles;
+	public void setProducts(RoleModel role) {
+		this.role = role;
+	}
+	public List<ItemInCartModel> getItems() {
+		return items;
+	}
+	public void setItems(List<ItemInCartModel> items) {
+		this.items = items;
+	}
+	public List<ReviewModel> getReviews() {
+		return reviews;
+	}
+	public void setReviews(List<ReviewModel> reviews) {
+		this.reviews = reviews;
+	}
+	public void setRole(RoleModel role) {
+		this.role = role;
 	}
 	
 	

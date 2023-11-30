@@ -8,15 +8,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+
+/*
+ * List of all available roles
+ * It could be extended by adding columns with permits for each role
+ * */
 
 @Entity(name="roles")
 public class RoleModel {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
+	
 	private String name;
-	@ManyToMany(mappedBy="roles")
+	
+	@OneToMany(mappedBy="role")
 	private List<UserModel> users=new ArrayList<>();
+	
+	
 	public Long getId() {
 		return id;
 	}
