@@ -60,13 +60,13 @@ public class UserModel {
 	private LocalDateTime joined;
 	
 	@ManyToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
-	@JoinColumn(name="id")
+	@JoinColumn(name="role_id")
 	private RoleModel role=new RoleModel();
 	
-	@OneToMany(mappedBy="userId", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="user", fetch = FetchType.LAZY)
     private List<ItemInCartModel> items=new ArrayList<>();
 	
-	@OneToMany(mappedBy="userId", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="user", fetch = FetchType.LAZY)
 	private List<ReviewModel> reviews=new ArrayList<>();
 	
 	

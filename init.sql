@@ -16,8 +16,8 @@ CREATE TABLE products (
   seller VARCHAR(50),
   price NUMERIC,
   description VARCHAR(800),
-  amountInStock INTEGER,
-  preview VARCHAR(50)
+  amount_in_stock INTEGER,
+  category_id BIGINT
   
 );
 
@@ -29,9 +29,10 @@ CREATE TABLE categories(
 
 
 CREATE TABLE products_categories (
+	
 	product_id BIGINT REFERENCES products(id), 
-	cat_id BIGINT REFERENCES categories(id),
-	CONSTRAINT products_categories_id PRIMARY KEY(product_id,cat_id)
+	category_id BIGINT REFERENCES categories(id),
+	CONSTRAINT products_categories_id PRIMARY KEY(product_id,category_id)
 
 );
 
@@ -47,7 +48,7 @@ INSERT INTO categories(name) VALUES
 ('Edukacja');
 
 
-INSERT INTO products(name,seller,price,amountInStock,description) VALUES
+INSERT INTO products(name,seller,price,amount_in_stock,description) VALUES
 
 ('Smartwatch elegancki', 'NejtStyle', 199.90,500, '{Stan:Nowy, Faktura: Tak, Model: AKTIVE 40, Kolor: Złoty, Materiał: Stal}'),
 ('Ładowarka do telefonu USB-C','Baseus',39.94,1000, '{Stan:Nowy, Faktura: Tak, Kolor:czarny}'),
@@ -116,7 +117,7 @@ INSERT INTO products(name,seller,price,amountInStock,description) VALUES
 
 ;
   
-INSERT INTO products_categories(product_id,cat_id) VALUES
+INSERT INTO products_categories(product_id,category_id) VALUES
 (1,1),
 (2,1),
 (3,1),

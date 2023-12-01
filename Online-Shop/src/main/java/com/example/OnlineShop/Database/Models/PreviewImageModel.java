@@ -1,5 +1,6 @@
 package com.example.OnlineShop.Database.Models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,12 +21,14 @@ public class PreviewImageModel {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
+	private String image;
+	
+	
 	@ManyToOne
-	@JoinColumn(name="product_id")
+	@JoinColumn(name="product_id",referencedColumnName="id")
 	private ProductModel product;
 	
-	private String image;
-
+	
 	
 	public Long getId() {
 		return id;

@@ -23,11 +23,11 @@ public class ReviewModel {
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id",referencedColumnName="id")
-	private UserModel userId;
+	private UserModel user;
 	
 	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name="product_id",referencedColumnName="id")
-	private ProductModel productId;
+	private ProductModel product;
 	
 	
 	private int rating;//0-10
@@ -39,23 +39,23 @@ public class ReviewModel {
 	}
 	
 	
-	public UserModel getUserId() {
-		return userId;
+	public UserModel getUser() {
+		return user;
 	}
 
 
-	public void setUserId(UserModel userId) {
-		this.userId = userId;
+	public void setUser(UserModel user) {
+		this.user = user;
 	}
 
 
-	public ProductModel getProductId() {
-		return productId;
+	public ProductModel getProduct() {
+		return product;
 	}
 
 
-	public void setProductId(ProductModel productId) {
-		this.productId = productId;
+	public void setProduct(ProductModel product) {
+		this.product = product;
 	}
 
 

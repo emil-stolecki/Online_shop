@@ -3,6 +3,8 @@ package com.example.OnlineShop.Database.Models;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
+
 /*
  * This entity represents a product than can be bought using the app
  * It holds information that is relevant for the customer
@@ -50,6 +52,7 @@ public class ProductModel {
 	private String name;
 	private String description;
 	
+	@Column(name="amount_in_stock")
 	private int amountInStock;
 	private float price;
 	
@@ -57,16 +60,16 @@ public class ProductModel {
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
-			  name = "product_category", 
+			  name = "products_categories", 
 			  joinColumns = @JoinColumn(name = "product_id"), 
 			  inverseJoinColumns = @JoinColumn(name = "category_id"))
-	private List<Integer> categories=new ArrayList<Integer>();
+	private List<CategoryModel> categories=new ArrayList<CategoryModel>();
 	
 	
-	@OneToMany(mappedBy="productId", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="product", fetch = FetchType.LAZY)
 	private List<PreviewImageModel> images = new ArrayList<PreviewImageModel>();
 	
-	@OneToMany(mappedBy="productId", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="product", fetch = FetchType.LAZY)
 	private List<ReviewModel> reviews=new ArrayList<>();
 	
 	public Long getId() {
@@ -103,10 +106,10 @@ public class ProductModel {
 	public void setSeller(String seller) {
 		this.seller = seller;
 	}
-	public List<Integer> getCategories() {
+	public List<CategoryModel> getCategories() {
 		return categories;
 	}
-	public void setCategories(List<Integer> categories) {
+	public void setCategories(List<CategoryModel> categories) {
 		this.categories = categories;
 	}
 	public List<PreviewImageModel> getImages() {

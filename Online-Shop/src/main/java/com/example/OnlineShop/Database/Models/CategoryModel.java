@@ -24,7 +24,7 @@ public class CategoryModel {
 	
 	private String name;
 	
-	@ManyToMany(mappedBy="categoryIds", fetch = FetchType.LAZY)
+	@ManyToMany(mappedBy="categories", fetch = FetchType.LAZY)
 	private List<ProductModel> products = new ArrayList<ProductModel>();
 
 	

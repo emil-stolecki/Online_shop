@@ -30,12 +30,12 @@ public class ItemInCartModel {
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name="user_id",referencedColumnName="id")
 	@NotNull
-	private UserModel userId;
+	private UserModel user;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name="product_id",referencedColumnName="id")
 	@NotNull
-	private ProductModel productId;
+	private ProductModel product;
 	
 	private int amount;
 	
@@ -47,16 +47,16 @@ public class ItemInCartModel {
 		this.id = id;
 	}
 	public UserModel getUserId() {
-		return userId;
+		return user;
 	}
-	public void setUserId(UserModel userId) {
-		this.userId = userId;
+	public void setUser (UserModel user ) {
+		this.user  = user ;
 	}
-	public ProductModel getProductId() {
-		return productId;
+	public ProductModel getProduct () {
+		return product ;
 	}
-	public void setProductId(ProductModel productId) {
-		this.productId = productId;
+	public void setProduct (ProductModel product ) {
+		this.product  = product ;
 	}
 	public int getAmount() {
 		return amount;
