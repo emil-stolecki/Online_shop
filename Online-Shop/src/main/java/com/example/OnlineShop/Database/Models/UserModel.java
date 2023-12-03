@@ -37,6 +37,8 @@ import jakarta.persistence.OneToMany;
  * One User can have many items in their cart 
  * Many Users can have the same item in their carts (as long as they are in stock)
  * 
+ * Could be extended by adding columns for default shipping address or making another table for it
+ * 
  */
 
 @Entity(name="users")
@@ -50,10 +52,11 @@ public class UserModel {
 	
 	@Column(unique=true) 
 	private String email;
-	
+	@Column(name = "first_name")
 	private String firstName;
+	@Column(name = "last_name")
 	private String lastName;
-	
+	@Column(name = "encrypted_password")
 	private String encryptedPassword;
 	
 	@CreationTimestamp

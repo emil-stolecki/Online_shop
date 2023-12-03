@@ -1,15 +1,15 @@
 package com.example.OnlineShop.Database.Dtos;
 
-import com.example.OnlineShop.Database.Dtos.ProductDto.Builder;
-import com.example.OnlineShop.Database.Models.ProductModel;
-import com.example.OnlineShop.Database.Models.UserModel;
 
 public record ReviewDto(Long id,
-						UserModel user,
-						ProductModel product,
+						Long userId,
+						String userName,
+						Long productId,
+						String productName,
 						int rating,
 						String content) {
 
+/*
 	
 	public static class Builder {
 		
@@ -44,5 +44,5 @@ public record ReviewDto(Long id,
 		public ReviewDto build() {
 			return new ReviewDto(id,user,product,rating,content);
 		}
-	}
+	}*/
 }
