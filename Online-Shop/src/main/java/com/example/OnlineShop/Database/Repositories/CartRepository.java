@@ -22,6 +22,9 @@ public interface CartRepository extends JpaRepository<ItemInCartModel,Long>{
 			+ "FROM items_in_carts c WHERE c.user.id = :user_id")
 	List<ItemInCartDto> findDtoByUser_id(@Param("user_id")Long id);
 	
+	Optional<ItemInCartModel> findById(Long id);
 	
+	
+	void removeByUser_id(Long userId);
 	
 }

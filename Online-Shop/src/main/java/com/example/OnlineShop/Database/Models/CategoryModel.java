@@ -3,6 +3,8 @@ package com.example.OnlineShop.Database.Models;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +25,7 @@ public class CategoryModel {
 	private Long id;
 	
 	private String name;
-	
+	@JsonManagedReference
 	@ManyToMany(mappedBy="categories", fetch = FetchType.LAZY)
 	private List<ProductModel> products = new ArrayList<ProductModel>();
 

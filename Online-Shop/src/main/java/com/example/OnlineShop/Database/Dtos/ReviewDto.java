@@ -9,13 +9,15 @@ public record ReviewDto(Long id,
 						int rating,
 						String content) {
 
-/*
+
 	
 	public static class Builder {
 		
 		private Long id;
-		private UserModel user;
-		private ProductModel product;
+		private Long userId;
+		private String userName;
+		private Long productId;
+		private String productName;
 		private int rating;
 		private String content;
 		
@@ -24,12 +26,20 @@ public record ReviewDto(Long id,
             this.id = id;
             return this;
         }
-		public Builder user(UserModel user) {
-            this.user = user;
+		public Builder userId(Long userId) {
+            this.userId = userId;
             return this;
         }
-		public Builder product(ProductModel product) {
-            this.product = product;
+		public Builder userName(String userName) {
+            this.userName = userName;
+            return this;
+        }
+		public Builder product(Long productId) {
+            this.productId = productId;
+            return this;
+        }
+		public Builder product(String productName) {
+            this.productName = productName;
             return this;
         }
 		public Builder rating(int rating) {
@@ -42,7 +52,7 @@ public record ReviewDto(Long id,
         }
 		
 		public ReviewDto build() {
-			return new ReviewDto(id,user,product,rating,content);
+			return new ReviewDto(id,userId,userName,productId,productName,rating,content);
 		}
-	}*/
+	}
 }

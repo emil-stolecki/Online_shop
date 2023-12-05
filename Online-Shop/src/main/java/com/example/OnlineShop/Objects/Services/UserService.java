@@ -1,4 +1,4 @@
-package com.example.OnlineShop.Database.Services;
+package com.example.OnlineShop.Objects.Services;
 
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
@@ -8,7 +8,9 @@ public interface UserService {
 	
 	boolean register(UserRegistrationDto registration);
 	
-	UserDto updateProfile(Long id);
+	boolean updateProfile(UserDto user);
 	boolean deleteprofile(Long id);
+	
+	UserDto getUserDetails(long id);
 	
 }

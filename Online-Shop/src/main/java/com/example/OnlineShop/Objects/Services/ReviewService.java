@@ -1,4 +1,4 @@
-package com.example.OnlineShop.Database.Services;
+package com.example.OnlineShop.Objects.Services;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public interface ReviewService {
 	//getReview: user,product -> ???review
 	
 	boolean addReview(ReviewDto reviewDto);
-	boolean editReview(Long id);
+	boolean editReview(ReviewDto reviewDto);
 	boolean removeReview(Long id);
 	List<ReviewDto> getReviewsForProduct(Long productId);
 	List<ReviewDto> getReviewsForUser(Long userId);

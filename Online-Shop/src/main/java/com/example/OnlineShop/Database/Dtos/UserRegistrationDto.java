@@ -20,5 +20,5 @@ public record UserRegistrationDto(	@NotEmpty @Size(min=4,max=20)
 									String password2) {
 
 	
-//This is data from user's registration form to be sent to the database
+//This is data from user's registration form to be sent to the server
 }

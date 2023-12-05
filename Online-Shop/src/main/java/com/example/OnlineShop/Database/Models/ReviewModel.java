@@ -1,5 +1,7 @@
 package com.example.OnlineShop.Database.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,10 +25,12 @@ public class ReviewModel {
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id",referencedColumnName="id")
+	@JsonManagedReference
 	private UserModel user;
 	
 	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name="product_id",referencedColumnName="id")
+	@JsonManagedReference
 	private ProductModel product;
 	
 	
@@ -37,7 +41,9 @@ public class ReviewModel {
 	public Long getId() {
 		return id;
 	}
-	
+	public void setId(Long id) {
+		this.id=id;
+	}
 	
 	public UserModel getUser() {
 		return user;

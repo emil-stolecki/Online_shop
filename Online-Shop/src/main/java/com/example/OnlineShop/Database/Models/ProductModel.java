@@ -3,6 +3,11 @@ package com.example.OnlineShop.Database.Models;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 
 /*
@@ -42,7 +47,7 @@ import jakarta.persistence.OneToMany;
  * Each product can have a couple of images that will be displayed on the product page
  * */
 
-
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity(name="products")
 public class ProductModel {
 	@Id
@@ -54,10 +59,11 @@ public class ProductModel {
 	
 	@Column(name="amount_in_stock")
 	private int amountInStock;
-	private float price;
+	private double price;
 	
 	private String seller;
 	
+	@JsonBackReference
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			  name = "products_categories", 
@@ -65,10 +71,11 @@ public class ProductModel {
 			  inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private List<CategoryModel> categories=new ArrayList<CategoryModel>();
 	
-	
+	@JsonBackReference
 	@OneToMany(mappedBy="product", fetch = FetchType.LAZY)
 	private List<PreviewImageModel> images = new ArrayList<PreviewImageModel>();
 	
+	@JsonBackReference
 	@OneToMany(mappedBy="product", fetch = FetchType.LAZY)
 	private List<ReviewModel> reviews=new ArrayList<>();
 	
@@ -94,10 +101,10 @@ public class ProductModel {
 	public void setAmountInStock(int amountInStock) {
 		this.amountInStock = amountInStock;
 	}
-	public float getPrice() {
+	public double getPrice() {
 		return price;
 	}
-	public void setPrice(float price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 	public String getSeller() {

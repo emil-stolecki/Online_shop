@@ -1,7 +1,8 @@
-package com.example.OnlineShop.Database.Services;
+package com.example.OnlineShop.Objects.Services;
 
 import java.util.List;
 
+import com.example.OnlineShop.Database.Dtos.ItemInCartDto;
 import com.example.OnlineShop.Database.Dtos.ProductDto;
 
 public interface CartService {
@@ -10,7 +11,7 @@ public interface CartService {
 	boolean addToCart(Long userId,Long productId);
 	boolean removeFromCart(Long id);
 	boolean updateAmount(Long id,int amount);
-	List<ProductDto> getProducts(Long userId);
+	List<ItemInCartDto> getProducts(Long userId);
 	boolean removeAll(Long userId);
 	
 }

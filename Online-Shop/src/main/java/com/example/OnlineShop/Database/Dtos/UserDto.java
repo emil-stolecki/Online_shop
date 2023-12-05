@@ -15,7 +15,9 @@ public record UserDto(Long id,
 					 String lastName,
 					 String encryptedPassword,
 					 LocalDateTime joined,
-					 RoleModel role) {
+					 Long roleId) {
 
 
 }
+
+
