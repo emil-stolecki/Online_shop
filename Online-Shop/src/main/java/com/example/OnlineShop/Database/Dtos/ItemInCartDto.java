@@ -6,7 +6,8 @@ import com.example.OnlineShop.Database.Models.UserModel;
 public record ItemInCartDto(Long id,							
 							Long productId,
 							String productName,
-							int amount) {
+							int amount,
+							double price) {
 	
 	
 }

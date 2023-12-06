@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +20,14 @@ import com.example.OnlineShop.Database.Dtos.ProductLessDto;
 import com.example.OnlineShop.Database.Dtos.ReviewDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
+import com.example.OnlineShop.Database.Models.CategoryModel;
 import com.example.OnlineShop.Objects.Objects.Cart;
 import com.example.OnlineShop.Objects.Objects.Product;
 import com.example.OnlineShop.Objects.Objects.Review;
 import com.example.OnlineShop.Objects.Objects.User;
 import com.example.OnlineShop.Other.Filter;
 import com.example.OnlineShop.Other.SimpleResponse;
+import com.example.OnlineShop.Kafka.Message.Message;
 
 @RestController
 public class WebController {
@@ -35,14 +38,18 @@ public class WebController {
     private final Product product;
     private final Cart cart;
     private final Review review;
+    private KafkaTemplate<Long, Message> kafkatemplate;
+	private String topic;
 	
 	@Autowired
-	public WebController (User user,Product product,Cart cart,Review review) {
+	public WebController (User user,Product product,Cart cart,Review review,KafkaTemplate<Long, Message> kafkatemplate) {
 			
 		this.user=user;
 		this.product=product;
 		this.cart=cart;
 		this.review=review;
+		this.kafkatemplate=kafkatemplate;
+		this.topic="user-activity";
 	}
 	
 	@GetMapping("/home")
@@ -98,10 +105,24 @@ public class WebController {
 	}
 	
 	@PostMapping("/product")
-	public ResponseEntity<ProductDto> getProductDetails(@RequestBody Long id) {
+	public ResponseEntity<ProductDto> getProductDetails(@RequestBody Long[] ids) {//array[0]-user id array[1]-product id
 		
-		ProductDto p= product.getById(id);
-		//send activity log
+		ProductDto p= product.getById(ids[1]);
+		List<String> categories = new ArrayList<String>();
+		
+		for (CategoryModel c:p.categories()) {
+			categories.add(c.getName());
+		}
+		
+		long userId=ids[0];
+		Message message= new Message.Builder()
+				.productId(ids[1])
+				.price(p.price())
+				.categories(categories)
+				.amountOfVisits(1L)
+				.build();
+		kafkatemplate.send(topic,userId,message);
+		
 		return ResponseEntity.ok(p);
 	}
 	
@@ -225,13 +246,7 @@ public class WebController {
 		return ResponseEntity.ok(r);	
 		
 	}
-	@PostMapping("/profile/history")
-	public String getUserHistory() {
-
-		//
-		
-		return "";
-	}
+	
 	
 	@PostMapping("/cart")
 	public ResponseEntity<List<ItemInCartDto>> getUsersCart(@RequestBody Long userId) {
@@ -241,12 +256,27 @@ public class WebController {
 	}
 	
 	@PostMapping("/checkout")
-	public String getPayment() {
-
-		//nothing
-		//send activity log
+	public ResponseEntity<SimpleResponse> getPayment(Long userId) {
+		String message="";
+		boolean success=false;
+		//We assume the user bought all products in cart
 		
-		return "";
+		List<ItemInCartDto> items=cart.getProducts(userId);		
+		
+		for(ItemInCartDto i : items) {
+			Message log= new Message.Builder()
+					.productId(i.id())
+					.price(i.price())
+					.amountBought(i.amount())
+					.build();
+			kafkatemplate.send(topic,userId,log);
+		}
+		
+		if (success) message="items bought";
+		else message="something went wrong";
+		SimpleResponse r = new SimpleResponse(success,message);	
+		
+		return ResponseEntity.ok(r);
 	}
 	
 	

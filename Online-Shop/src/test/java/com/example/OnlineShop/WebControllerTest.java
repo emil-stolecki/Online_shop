@@ -66,7 +66,7 @@ public class WebControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andReturn().getResponse().getContentAsString();
 		
-		//System.out.println("/filter: "+responseContent);
+		System.out.println("/filter: "+responseContent);
         
         
     }
@@ -110,11 +110,11 @@ public class WebControllerTest {
 	
 	@Test
 	public void getProductTest() throws Exception{
-		Long id =10l;
+		Long[] ids =new Long[] {1L,10l};
 		
 		String responseContent=mockMvc.perform(MockMvcRequestBuilders.post("/product")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(id)))
+				.content(objectMapper.writeValueAsString(ids)))
 					
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -263,7 +263,7 @@ public class WebControllerTest {
 	@Test
 	@Transactional
 	public void updateProductAmountInCartTest() throws Exception{
-		ItemInCartDto item=new ItemInCartDto(1L,10L,"",3);
+		ItemInCartDto item=new ItemInCartDto(1L,10L,"",3,0d);
 		mockMvc.perform(MockMvcRequestBuilders.post("/product/update-amount")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(item)))

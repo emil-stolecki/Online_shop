@@ -18,7 +18,7 @@ public interface CartRepository extends JpaRepository<ItemInCartModel,Long>{
 					+ "FROM items_in_carts c WHERE c.id = :id")
 	Optional<ItemInCartDto> findDtoById(@Param("id")Long id);
 	//Optional<ItemInCartModel> findByUser_IdAndProduct_Id(Long userId,Long productId);
-	@Query(value ="SELECT new "+dto+"(c.id,c.product.id,c.product.name,c.amount) "
+	@Query(value ="SELECT new "+dto+"(c.id,c.product.id,c.product.name,c.amount,c.product.price) "
 			+ "FROM items_in_carts c WHERE c.user.id = :user_id")
 	List<ItemInCartDto> findDtoByUser_id(@Param("user_id")Long id);
 	
