@@ -57,7 +57,7 @@ public class WebControllerTest {
 	@Test
     public void emptyFilterTest() throws Exception {
 		
-		Filter filter = new Filter();			
+		Filter filter = new Filter();//empty filter		
 		String responseContent=mockMvc.perform(MockMvcRequestBuilders.post("/filter")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(filter)))
@@ -66,20 +66,20 @@ public class WebControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andReturn().getResponse().getContentAsString();
 		
-		System.out.println("/filter: "+responseContent);
+		System.out.println("EMPTY /filter: "+responseContent);
         
         
     }
+
 	
 	@Test
     public void filterTest() throws Exception {
 		
 		Filter filter = new Filter();	
 		
-		filter.setName("a");
-		filter.setCategory("Moda");
-		filter.setMinPrice(40d);
-		filter.setMaxPrice(200d);
+	
+		filter.setMinPrice(50d);
+		filter.setMaxPrice(100d);
 		filter.setLimit(5);
 		String responseContent=mockMvc.perform(MockMvcRequestBuilders.post("/filter")
 				.contentType(MediaType.APPLICATION_JSON)

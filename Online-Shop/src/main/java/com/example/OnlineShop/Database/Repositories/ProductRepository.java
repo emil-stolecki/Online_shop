@@ -28,9 +28,9 @@ public interface ProductRepository extends JpaRepository<ProductModel,Long>{
 	//Will be used in search results, displayed to the user as list	
 	String dtoLess="com.example.OnlineShop.Database.Dtos.ProductLessDto";
 	
-	@Query(value = "SELECT new "+dtoLess+"(p.id,p.name,p.price,p.seller) FROM products p JOIN p.categories c "
+	@Query(value = "SELECT DISTINCT new "+dtoLess+"(p.id,p.name,p.price,p.seller) FROM products p JOIN p.categories c "
 			+ "WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) "
-			+ "AND LOWER(c.name) LIKE :category "
+			+ "AND LOWER(c.name) LIKE LOWER(:category) "
 			+ "AND p.price BETWEEN :minPrice AND :maxPrice")
 			
 	List<ProductLessDto> findDtoByFilter( @Param("name")String name,
@@ -44,6 +44,15 @@ public interface ProductRepository extends JpaRepository<ProductModel,Long>{
 	@Query("SELECT new "+dtoLess+"(p.id, p.name, p.price, p.seller) " 
 		       			+"FROM products p WHERE p.id IN :ids")	
 	List<ProductLessDto> findAllDtosByIdIn(@Param("ids")List<Long> ids);
+	
+	@Query(value = "SELECT COUNT(DISTINCT p.id) FROM products p JOIN p.categories c "
+	        + "WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) "
+	        + "AND LOWER(c.name) LIKE LOWER(:category) "
+	        + "AND p.price BETWEEN :minPrice AND :maxPrice")
+	Long countByFilter(@Param("name") String name,
+	                   @Param("category") String category,
+	                   @Param("minPrice") double minPrice,
+	                   @Param("maxPrice") double maxPrice);
 	
 }
 

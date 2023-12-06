@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
+import com.example.OnlineShop.Database.Dtos.CategoryDto;
 import com.example.OnlineShop.Database.Dtos.ProductDto;
 import com.example.OnlineShop.Database.Dtos.ProductLessDto;
 import com.example.OnlineShop.Database.Models.ProductModel;
+import com.example.OnlineShop.Database.Repositories.CategoryRepository;
 import com.example.OnlineShop.Database.Repositories.ProductRepository;
 import com.example.OnlineShop.Objects.Services.ProductService;
 import com.example.OnlineShop.Other.Filter;
@@ -20,10 +22,12 @@ import com.example.OnlineShop.Other.Filter;
 public class Product implements ProductService{
 
 	private ProductRepository productRepo;
+	private CategoryRepository catRepo;
 	
 	@Autowired
-	public Product(ProductRepository productRepo) {
+	public Product(ProductRepository productRepo,CategoryRepository catRepo) {
 		this.productRepo=productRepo;
+		this.catRepo=catRepo;
 	}
 	
 	@Override
@@ -41,20 +45,28 @@ public class Product implements ProductService{
 
 	@Override
 	public  List<ProductLessDto> getByCategoryandFilter(Filter filter) {
-		
-		
+			
 		 String name = (filter.getName()!=null)? "%"+filter.getName()+"%": "%";
 		 String category = (filter.getCategory()!=null)? filter.getCategory(): "%";
 		 double minPrice =(filter.getMinPrice()!=null)?filter.getMinPrice():0;
-		 double maxPrice =(filter.getMaxPrice()!=null)?filter.getMaxPrice():Double.MAX_VALUE;
+		 double maxPrice =(filter.getMaxPrice()!=null && filter.getMaxPrice()>= 0.000001)?filter.getMaxPrice():Double.MAX_VALUE;
 		 
 		 int offset=filter.getOffset();
 		 int limit=filter.getLimit();
 		 Pageable pageable = PageRequest.of(offset, limit);
 		 
 		 List<ProductLessDto> filteredProducts=productRepo.findDtoByFilter(name,category,minPrice,maxPrice,pageable);
-		
 		return filteredProducts;
+	}
+	@Override
+	public  Long getByCategoryandFilterCount(Filter filter) {
+		 String name = (filter.getName()!=null)? "%"+filter.getName()+"%": "%";
+		 String category = (filter.getCategory()!=null)? filter.getCategory(): "%";
+		 double minPrice =(filter.getMinPrice()!=null)?filter.getMinPrice():0;
+		 double maxPrice =(filter.getMaxPrice()!=null && filter.getMaxPrice()>= 0.000001)?filter.getMaxPrice():Double.MAX_VALUE;
+		 
+
+		return productRepo.countByFilter(name,category,minPrice,maxPrice);
 	}
 
 	@Override
@@ -75,6 +87,12 @@ public class Product implements ProductService{
 		 List<ProductLessDto> products = productRepo.findAllDtosByIdIn(popular);
 		
 		return products ;
+	}
+
+	@Override
+	public List<CategoryDto> getCategories() {
+		List<CategoryDto> list = catRepo.findAllDto();
+		return list;
 	}
 
 	

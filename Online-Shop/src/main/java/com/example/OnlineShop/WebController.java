@@ -9,11 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.OnlineShop.Database.Dtos.CategoryDto;
 import com.example.OnlineShop.Database.Dtos.ItemInCartDto;
 import com.example.OnlineShop.Database.Dtos.ProductDto;
 import com.example.OnlineShop.Database.Dtos.ProductLessDto;
@@ -30,6 +32,7 @@ import com.example.OnlineShop.Other.SimpleResponse;
 import com.example.OnlineShop.Kafka.Message.Message;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class WebController {
 
 	
@@ -58,16 +61,30 @@ public class WebController {
 		List<ProductLessDto> popularProducts = product.getPopular();		
 		return ResponseEntity.ok(popularProducts);
 	}
-	
+	@GetMapping("/categories")
+	public ResponseEntity<List<CategoryDto>> getCategories(){
+		
+		List<CategoryDto> list=product.getCategories();
+		return ResponseEntity.ok(list);		
+	}
 
 	@PostMapping("/filter")
 	public ResponseEntity<List<ProductLessDto>> applyfilter(@RequestBody Filter filter) {
 		
 		List<ProductLessDto> filteredProducts = product.getByCategoryandFilter(filter);
 		
+		
 		return ResponseEntity.ok(filteredProducts);
 	}
-	
+	@PostMapping("/filter/count")
+	public ResponseEntity<Long> getfilterCount(@RequestBody Filter filter) {
+		
+		Long count = product.getByCategoryandFilterCount(filter);
+		
+		
+		
+		return ResponseEntity.ok(count);
+	}
 	@PostMapping("/register")
 	public ResponseEntity<SimpleResponse> register(@RequestBody UserRegistrationDto newUser) {
 		

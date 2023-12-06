@@ -1,38 +1,118 @@
-.App {
+body{
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+ul{
+  list-style: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button{
+  background-color: #5bb294;
+      color: white;    
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+}
+button:hover {
+  background-color: #dcdcdc;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+button.active {
+  background-color: rgb(23, 5, 62);
 }
-
-.App-link {
-  color: #61dafb;
+.clearfix{
+  clear:both;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.topbar{
+  background-color: rgb(23, 5, 62);
+  color:azure;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  height: 12vh;
+  width: 100vw;
+}
+.leftbar{
+  background-color:rgb(109, 121, 189);
+  color:azure;
+  float: left;
+  font-size: 16px;
+  font-weight: 100;
+  padding: 2px;
+  width: 200px;
+  height: 100vh;
+}
+.topbar h1{
+  margin: 0px;
+}
+.register-login-profile{
+  float:right;
+  margin-right: 20px;
+}
+.filter{
+  text-align: left;
+  height:12vh;
+  background-color: rgb(43, 55, 105);
+  color:rgb(129, 129, 140);
+  padding-bottom: 1vh;
+}
+.filter h3{
+  float: left;
+  width: 200px;
+  text-align: center;
+  margin: 0px;
+}
+.filter p{
+  margin:auto;
+}
+.filter-elem{
+  float: left;
+  min-width: 15vw;
+  margin-left: 10px;
+}
+.searchbar{
+  min-width: 15vw;
+}
+.content{
+  float: left;
+  margin-left: 200px;
+  margin-top: 25vh;
+  background-color: rgb(42, 42, 42);
+  width: calc(100% - 200px);
+}
+.tile{
+  height: 100px;
+  background-color: burlywood;
+  padding: 2px;
+  margin: 2px;
+  margin-left: -5px;
+}
+.fixed{
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+.tile img{
+  width: 100px;    
+  height: 100px;   
+  border-radius: 4px;  
+  float: left;
+  margin-right: 10px;
+}
+.tile b{
+  float:right;
+  font-size: 32px;
+}
+.tile h2{
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+  
+}
+.pageswitcher{
+  background-color:  rgb(43, 55, 105);
+  height: 5vh;
 }
