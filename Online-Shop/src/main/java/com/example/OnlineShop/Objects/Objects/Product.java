@@ -12,9 +12,11 @@ import org.springframework.data.domain.PageRequest;
 import com.example.OnlineShop.Database.Dtos.CategoryDto;
 import com.example.OnlineShop.Database.Dtos.ProductDto;
 import com.example.OnlineShop.Database.Dtos.ProductLessDto;
+import com.example.OnlineShop.Database.Dtos.ReviewDto;
 import com.example.OnlineShop.Database.Models.ProductModel;
 import com.example.OnlineShop.Database.Repositories.CategoryRepository;
 import com.example.OnlineShop.Database.Repositories.ProductRepository;
+import com.example.OnlineShop.Database.Repositories.ReviewRepository;
 import com.example.OnlineShop.Objects.Services.ProductService;
 import com.example.OnlineShop.Other.Filter;
 
@@ -23,11 +25,13 @@ public class Product implements ProductService{
 
 	private ProductRepository productRepo;
 	private CategoryRepository catRepo;
+	private ReviewRepository reviewRepo;
 	
 	@Autowired
-	public Product(ProductRepository productRepo,CategoryRepository catRepo) {
+	public Product(ProductRepository productRepo,CategoryRepository catRepo,ReviewRepository reviewRepo) {
 		this.productRepo=productRepo;
 		this.catRepo=catRepo;
+		this.reviewRepo=reviewRepo;
 	}
 	
 	@Override
@@ -35,10 +39,13 @@ public class Product implements ProductService{
 		ProductModel product=productRepo.findById(id).orElse(null);
 		ProductDto productDto =null;
 		
+		//get ReviewDtos
+		List<ReviewDto> reviews=reviewRepo.findDtoByProduct_id(id);
+		
 		if (product!=null) {
 			productDto=new ProductDto(product.getId(),product.getName(),product.getDescription(),
 							product.getAmountInStock(),product.getPrice(),product.getSeller(),
-							product.getCategories(),product.getImages(),product.getReviews());
+							product.getCategories(),product.getImages(),reviews);
 		}
 		return productDto;
 	}
@@ -53,6 +60,7 @@ public class Product implements ProductService{
 		 
 		 int offset=filter.getOffset();
 		 int limit=filter.getLimit();
+		 System.out.println("offest: "+offset+" limit: "+limit);
 		 Pageable pageable = PageRequest.of(offset, limit);
 		 
 		 List<ProductLessDto> filteredProducts=productRepo.findDtoByFilter(name,category,minPrice,maxPrice,pageable);

@@ -22,6 +22,7 @@ import com.example.OnlineShop.Database.Dtos.ProductLessDto;
 import com.example.OnlineShop.Database.Dtos.ReviewDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
+import com.example.OnlineShop.Database.Dtos.User_productDto;
 import com.example.OnlineShop.Database.Models.CategoryModel;
 import com.example.OnlineShop.Objects.Objects.Cart;
 import com.example.OnlineShop.Objects.Objects.Product;
@@ -32,7 +33,7 @@ import com.example.OnlineShop.Other.SimpleResponse;
 import com.example.OnlineShop.Kafka.Message.Message;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000",allowCredentials="true")
 public class WebController {
 
 	
@@ -113,32 +114,24 @@ public class WebController {
 		return ResponseEntity.ok(r);
 	}
 	
-	@PostMapping("/login")
-	public String login() {
-
-		//handled by spring security
-		
-		return "";
-	}
 	
 	@PostMapping("/product")
-	public ResponseEntity<ProductDto> getProductDetails(@RequestBody Long[] ids) {//array[0]-user id array[1]-product id
+	public ResponseEntity<ProductDto> getProductDetails(@RequestBody User_productDto up) {
 		
-		ProductDto p= product.getById(ids[1]);
+		ProductDto p= product.getById(up.productId());
 		List<String> categories = new ArrayList<String>();
 		
 		for (CategoryModel c:p.categories()) {
 			categories.add(c.getName());
 		}
 		
-		long userId=ids[0];
 		Message message= new Message.Builder()
-				.productId(ids[1])
+				.productId(up.userId())
 				.price(p.price())
 				.categories(categories)
 				.amountOfVisits(1L)
 				.build();
-		kafkatemplate.send(topic,userId,message);
+		kafkatemplate.send(topic,up.userId(),message);
 		
 		return ResponseEntity.ok(p);
 	}

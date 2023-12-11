@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -64,6 +65,7 @@ public class ProductModel {
 	private String seller;
 	
 	@JsonBackReference
+	@JsonIgnoreProperties("products")
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			  name = "products_categories", 
@@ -72,10 +74,12 @@ public class ProductModel {
 	private List<CategoryModel> categories=new ArrayList<CategoryModel>();
 	
 	@JsonBackReference
+	@JsonIgnoreProperties("products")
 	@OneToMany(mappedBy="product", fetch = FetchType.LAZY)
 	private List<PreviewImageModel> images = new ArrayList<PreviewImageModel>();
 	
 	@JsonBackReference
+	@JsonIgnoreProperties("products")
 	@OneToMany(mappedBy="product", fetch = FetchType.LAZY)
 	private List<ReviewModel> reviews=new ArrayList<>();
 	

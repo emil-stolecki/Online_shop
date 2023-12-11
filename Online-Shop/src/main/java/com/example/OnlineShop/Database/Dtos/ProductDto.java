@@ -14,7 +14,7 @@ public record ProductDto(Long id,
 						String seller,
 						List<CategoryModel> categories,
 						List<PreviewImageModel> images,
-						List<ReviewModel> reviews) {
+						List<ReviewDto> reviews) {
 
 	
 }

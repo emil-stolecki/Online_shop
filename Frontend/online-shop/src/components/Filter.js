@@ -22,30 +22,26 @@ export default function Filter(props) {
 
    const handleNext=()=>{
     if ((page+1)*limit<props.count){
+      props.changepage((prev)=>({
+        ...prev,
+        ['offset']:page+1
+      }))
       setpage(page+1)
-      props.onFilterChange('offset',page+1);
-      props.onConfirm()
-      console.log("+1")
     }
-    console.log(page)
    }
    const handlePrev=()=>{
     if (page>0){
-      setpage(page-1)
-      props.onFilterChange('offset',page-1);
-      props.onConfirm()
-      console.log("-1")
+      props.changepage((prev)=>({
+        ...prev,
+        ['offset']:page-1
+      }))
+      setpage(page-1)   
     }
    }
-
    const handleConfirm=()=>{
       setpage(0);
       props.onConfirm()
-      console.log(page)
-
    }
-
-
 
     return (    
           <div className="filter">

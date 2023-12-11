@@ -23,6 +23,7 @@ import com.example.OnlineShop.Database.Dtos.ItemInCartDto;
 import com.example.OnlineShop.Database.Dtos.ReviewDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
+import com.example.OnlineShop.Database.Dtos.User_productDto;
 import com.example.OnlineShop.Other.Filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -110,11 +111,12 @@ public class WebControllerTest {
 	
 	@Test
 	public void getProductTest() throws Exception{
-		Long[] ids =new Long[] {1L,10l};
+		User_productDto up = new User_productDto(1L,1L);
+		
 		
 		String responseContent=mockMvc.perform(MockMvcRequestBuilders.post("/product")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(ids)))
+				.content(objectMapper.writeValueAsString(up)))
 					
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -145,7 +147,7 @@ public class WebControllerTest {
 	public void addReview() throws Exception{
 		
 		ReviewDto rev = new ReviewDto.Builder()
-				.userId(3L)
+				.userId(1L)
 				.product(30L)
 				.rating(8)
 				.content("very good")

@@ -1,6 +1,7 @@
 package com.example.OnlineShop.Objects.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.OnlineShop.Database.Dtos.UserDto;
@@ -19,12 +20,13 @@ public class User implements UserService{
 
 	private UserRepository userRepo;
 	private RoleRepository roleRepo;
+	private PasswordEncoder encoder;
 	@Autowired
-	public User(UserRepository userRepo,RoleRepository roleRepo) {
+	public User(UserRepository userRepo,RoleRepository roleRepo,PasswordEncoder encoder) {
 		
 		this.userRepo=userRepo;
 		this.roleRepo=roleRepo;
-	
+		this.encoder=encoder;
 	}
 	
 	@Override
@@ -36,7 +38,7 @@ public class User implements UserService{
 		user.setLogin(registration.login());
 		user.setFirstName(registration.firstName());
 		user.setLastName(registration.lastName());
-		user.setEncryptedPassword(registration.password());
+		user.setEncryptedPassword(encoder.encode(registration.password()));
 		user.setEmail(registration.email());		
 		RoleModel role= roleRepo.findByName("USER").orElse(null);
 		user.setRole(role);

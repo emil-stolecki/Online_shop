@@ -1,18 +1,23 @@
 body{
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
+  background-color: rgb(43, 55, 105);
+  color:azure;
 }
 ul{
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 button{
   background-color: #5bb294;
-      color: white;    
-      padding: 8px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+  color: white;    
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0px 2px;
 }
 button:hover {
   background-color: #dcdcdc;
@@ -32,9 +37,14 @@ button.active {
   font-weight: 500;
   height: 12vh;
   width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  
 }
 .leftbar{
-  background-color:rgb(109, 121, 189);
+  background-color: rgb(43, 55, 105);
   color:azure;
   float: left;
   font-size: 16px;
@@ -42,7 +52,19 @@ button.active {
   padding: 2px;
   width: 200px;
   height: 100vh;
+  text-align: center;
+  position: fixed;
+  top: 24vh;
+  left: 0;
+  bottom: 0;
 }
+.leftbar button{
+ 
+  width: 98%;
+  margin:2px;
+  
+}
+
 .topbar h1{
   margin: 0px;
 }
@@ -56,6 +78,11 @@ button.active {
   background-color: rgb(43, 55, 105);
   color:rgb(129, 129, 140);
   padding-bottom: 1vh;
+  position: fixed;
+  top: 12vh;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
 }
 .filter h3{
   float: left;
@@ -80,13 +107,18 @@ button.active {
   margin-top: 25vh;
   background-color: rgb(42, 42, 42);
   width: calc(100% - 200px);
+  z-index: 1
 }
+
 .tile{
   height: 100px;
   background-color: burlywood;
   padding: 2px;
   margin: 2px;
-  margin-left: -5px;
+ 
+}
+.tile:hover{
+  background-color: rgb(206, 176, 136);
 }
 .fixed{
   position: fixed;
@@ -115,4 +147,176 @@ button.active {
 .pageswitcher{
   background-color:  rgb(43, 55, 105);
   height: 5vh;
+  text-align: center;
+}
+
+.pageswitcher button{
+  background-color:  rgb(102, 115, 131);
+  padding: 4px 8px;
+  margin: 2px;
+  
+
+}
+.register-login{
+  color:azure;
+
+}
+.register-login input{
+  float: right;
+  margin-right: 32vw;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+.register-login label{
+  float: left;
+  margin-left: 32vw;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+.register-login button{
+  margin-top: 10px;
+}
+.register-login p{
+  font-size: 14px;
+  color:rgb(195, 195, 195);
+  margin-top:auto;
+  margin-bottom: auto;
+}
+
+.line{
+  width: 40vw;
+  height: 1px;
+  background-color: rgb(107, 118, 125);
+  margin: 5px 30vw;
+  margin-top: 10px;
+}
+.errorMessage{
+  margin-top: 20px;
+}
+.product{
+  margin-top: 15vh;
+  color: rgb(217, 224, 228);
+}
+.product_col_left{
+  float:left;
+  background-color: rgb(31, 34, 43);
+  width: 53vw; 
+  margin-left: 1vw;
+  padding: 2vw;
+  text-align: left;
+  font-size: 25px;
+
+}
+.product_col_left h1{
+  font-size: 32px;
+}
+.product_col_left h2{
+  font-size: 25px;
+}
+
+.product_col_right{
+  float:right;
+  background-color: rgb(51, 61, 98);
+  width: 35vw;
+  margin-right: 1vw;
+  padding: 2vw;
+}
+.product_description{
+  margin-top: 80px;
+}
+.product_description li{
+  text-align: left;
+  margin-top: 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.product_desc_left{
+float:left
+}
+.product_desc_right{
+  float:left;
+  margin-right:10px;
+  margin-bottom: 50px;
+}
+.product_image{
+  background-color: rgb(51, 51, 51);
+  width: 50vw;
+  height: 55vw;
+}
+
+.product_image img{
+  width: 48vw;
+  padding: 1vw;
+}
+.product_price{
+  margin-top: 10vh;
+  color: white;
+  font-size: 30px;
+}
+.product_price p{
+  text-align: right;
+}
+.quantity-buttons{
+  float: right;
+  margin-left: 30px;
+  margin-top: 10px;
+
+}
+.quantity-buttons button{
+  padding: 4px;
+  width: 40px;
+  font-weight: 900;
+  font-size: 20px;
+}
+.add_to_cart_button{
+  font-size: 40px;
+  background-color: #0cbab4;
+  color:rgb(200, 248, 243);
+  padding: 10px 20px;
+
+}
+
+.reviews{
+  margin-top: 15vh;
+  text-align: left;
+
+}
+
+.review{
+  background-color: rgb(82, 99, 111);
+  padding: 2px;
+  margin-bottom: 2px;
+}
+.review b{
+  font-weight: 700;
+}
+.review p{
+  margin: auto;
+  margin-bottom: 10px
+}
+.cart{
+  margin-top: 16vh;
+}
+.itemCount b{
+  font-size: 30px;
+  text-align: left;
+  margin-left: 8px;
+  margin-top: 30px;
+  float: left;
+ 
+}
+.itemCount{
+  width: 25vw;
+  float: left;
+ 
+}
+.remove{
+  background-color: rgb(236, 164, 21);
+  margin-top: 38px;
+}
+
+.checkout{
+  background-color: #0cbab4;
+  padding: 10px 20px;
+  font-size: 40px;
 }

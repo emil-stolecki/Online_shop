@@ -4,14 +4,15 @@ import ProductPreviewTile from './ProductPreviewTile';
 
 
 export default function HomePageContent(props) {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState([]);
     const [error, setError] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
           try {
             const response = await axios.get('http://localhost:8081/home');
-            console.log(response.data);
             setData(response.data);
+            
+            console.log(response.data)
             
           } catch (error) {
             setError(error.message);
@@ -22,11 +23,14 @@ export default function HomePageContent(props) {
 
     useEffect(() => {       
           const handlePostRequest = async () => {
+           
+        
             try {
-              const response = await axios.post('http://localhost:8081/filter', props.filter);
+              const response = await axios.post('http://localhost:8081/filter', props.filter,{withCredentials: true,});
               setData(response.data);
+              console.log(response.data)
               if (props.filter.name==null &&props.filter.category==null&&props.filter.min==null&&props.filter.max==null){
-                const response2 = await axios.post('http://localhost:8081/filter/count', props.filter);
+                const response2 = await axios.post('http://localhost:8081/filter/count', props.filter,{withCredentials: true,});
                 props.handleCount(response2.data)
               }
              
@@ -41,13 +45,15 @@ export default function HomePageContent(props) {
             setData(null);
           }
       }, [props.filter]);
+
+  
     return (
           <div className="content">
            {error && <p>Error: {error}</p>}
            {data && data.length > 0 ? ( 
         <ul>
-          {data.map(product => (
-            <li key={product.id}><ProductPreviewTile name={product.name} price={product.price.toFixed(2)} seller={product.seller}/></li>
+          {data.map(product => ( 
+            <li key={product.id}><ProductPreviewTile id={product.id} name={product.name} price={product.price.toFixed(2)} seller={product.seller}/></li>         
           ))}
         </ul>
       ) : (

@@ -1,5 +1,6 @@
 package com.example.OnlineShop.Database.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -22,12 +23,12 @@ public class ReviewModel {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
+	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id",referencedColumnName="id")
 	@JsonManagedReference
 	private UserModel user;
-	
+	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name="product_id",referencedColumnName="id")
 	@JsonManagedReference
