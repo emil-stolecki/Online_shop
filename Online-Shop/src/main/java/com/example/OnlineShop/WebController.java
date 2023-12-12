@@ -7,6 +7,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,12 +18,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 import com.example.OnlineShop.Database.Dtos.CategoryDto;
 import com.example.OnlineShop.Database.Dtos.ItemInCartDto;
 import com.example.OnlineShop.Database.Dtos.ProductDto;
 import com.example.OnlineShop.Database.Dtos.ProductLessDto;
 import com.example.OnlineShop.Database.Dtos.ReviewDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
+import com.example.OnlineShop.Database.Dtos.UserLoginInputDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
 import com.example.OnlineShop.Database.Dtos.User_productDto;
 import com.example.OnlineShop.Database.Models.CategoryModel;
@@ -29,6 +34,7 @@ import com.example.OnlineShop.Objects.Objects.Product;
 import com.example.OnlineShop.Objects.Objects.Review;
 import com.example.OnlineShop.Objects.Objects.User;
 import com.example.OnlineShop.Other.Filter;
+import com.example.OnlineShop.Other.Loginresponse;
 import com.example.OnlineShop.Other.SimpleResponse;
 import com.example.OnlineShop.Kafka.Message.Message;
 
@@ -42,11 +48,14 @@ public class WebController {
     private final Product product;
     private final Cart cart;
     private final Review review;
+    private final AuthenticationManager authManager;
     private KafkaTemplate<Long, Message> kafkatemplate;
 	private String topic;
 	
 	@Autowired
-	public WebController (User user,Product product,Cart cart,Review review,KafkaTemplate<Long, Message> kafkatemplate) {
+	public WebController (User user,Product product,Cart cart,Review review,
+			KafkaTemplate<Long, Message> kafkatemplate,
+			AuthenticationManager authManager) {
 			
 		this.user=user;
 		this.product=product;
@@ -54,6 +63,28 @@ public class WebController {
 		this.review=review;
 		this.kafkatemplate=kafkatemplate;
 		this.topic="user-activity";
+		this.authManager=authManager;
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<Loginresponse> login(@RequestBody UserLoginInputDto input) {
+		AuthenticatedUserDto authUser=null;
+		Boolean success =null;
+		try {
+			 var authentication = authManager.authenticate(
+				new UsernamePasswordAuthenticationToken(input.login(),input.password())
+				
+				);
+			 	authUser = user.getAuthenticatedUser(authentication.getName());
+			 	success = true;
+
+		}catch(Exception e) {
+			success=false;
+
+		}
+		Loginresponse r = new Loginresponse(success,authUser);
+		return ResponseEntity.ok(r);
+		
 	}
 	
 	@GetMapping("/home")

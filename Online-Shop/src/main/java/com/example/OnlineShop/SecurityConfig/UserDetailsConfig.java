@@ -12,7 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.OnlineShop.Database.Dtos.UserLoginDto;
+import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
+import com.example.OnlineShop.Database.Dtos.UserCheckLoginDto;
 import com.example.OnlineShop.Database.Repositories.UserRepository;
 
 
@@ -27,27 +28,24 @@ public class UserDetailsConfig implements UserDetailsService{
 	}
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserLoginDto user;
-		if(username.contains("@")) {			
-			user = userRepo.findDtoByEmail(username).orElse(null);
+		UserCheckLoginDto user;
+		if(username.contains("@")) {
+			user = userRepo.findLoginDtoByEmail(username).orElseThrow(null);
 			}
 		else {
-			System.out.println("here");
-			System.out.println(username);
-			user = userRepo.findDtoByLogin(username).orElse(null);
-			System.out.println(user);
+			
+			user = userRepo.findLoginDtoByLogin(username).orElseThrow(null);
+			
 		}
 		if(user!= null) {
 			
 			User authUser= new User(
 					
 					user.login(),
-					user.encryptedPassword(),
+					user.password(),
 					new ArrayList<String>().stream().map((role)->new SimpleGrantedAuthority(""))
 					.collect(Collectors.toList())
-			
-			);		
-			System.out.println(authUser.getUsername());
+			);
 			return authUser;		
 		}
 		else {

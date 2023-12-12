@@ -5,7 +5,7 @@ import Review from '../components/Review';
 import axios from 'axios';
 import missingImage from '../images/missing_image_tile.png';
 
-export default function Product() {
+export default function Product(props) {
   const [data, setData] = useState([]);
   const [error, setError] = useState([]);
 
@@ -20,7 +20,7 @@ export default function Product() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId=10;
+        const userId=(props.user==null)?0:props.user.id;
         const body = { userId:  userId, productId: id };
         const response = await axios.post('http://localhost:8081/product',body);
         setData(response.data);
@@ -89,7 +89,7 @@ export default function Product() {
 
   return (    
     <div>
-       <Topbar/>
+       <Topbar user={props.user}/>
         <div className='clearfix'></div>
         <div className='product'>
           

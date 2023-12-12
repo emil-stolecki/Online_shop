@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -41,17 +43,20 @@ public class FilterChainConfig {
 	    	http
 	    	.cors(Customizer.withDefaults())
 	    	.csrf(AbstractHttpConfigurer::disable)	
+	    	.sessionManagement((session) -> session
+	                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	    	        )
 	    	
 	    	.authorizeHttpRequests(auth->{
 	    		auth.requestMatchers("/","/home", "/register","/login","/login?error=true",
 	    							"/categories","/filter","/filter/count","/product",
-	    							"/product/review").permitAll()
+	    							"/product/review","/cart","/profile").permitAll()
 	    		.requestMatchers(HttpMethod.OPTIONS).permitAll()
 	    		.anyRequest().authenticated();
 	    		})
 
-	    		
-	    	.formLogin(formLogin ->
+	    		.formLogin(form->{form.disable();})
+	    	/*.formLogin(formLogin ->
 			formLogin
 				
 				.loginProcessingUrl("/login")
@@ -76,7 +81,7 @@ public class FilterChainConfig {
 		        })
 				.permitAll()
 				
-		)
+		)*/
 		.logout(logout ->
 			logout
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -90,15 +95,25 @@ public class FilterChainConfig {
 	    public PasswordEncoder passwordEncoder() {
 	        return new BCryptPasswordEncoder(16);
 	    }
+	    /*
 	    public void configure(AuthenticationManagerBuilder builder) throws Exception {
 	    	builder.userDetailsService(useDetailsService).passwordEncoder(passwordEncoder());
-	    }
+	    }*/
 	    
+	    @Bean
+	    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+	    	return http.getSharedObject(AuthenticationManagerBuilder.class)
+	    			.userDetailsService(useDetailsService)
+	    			.passwordEncoder(passwordEncoder())
+	    			.and().build();
+	    			
+	    }
 	    @Bean
 	    public CorsConfigurationSource corsConfigurationSource() {
 	        CorsConfiguration configuration = new CorsConfiguration();
 	        configuration.addAllowedOrigin("http://localhost:3000");
-	        configuration.addAllowedHeader("*");
+	        configuration.addAllowedHeader("Authorization");
+	        configuration.addAllowedHeader("Content-Type");
 	        configuration.addAllowedMethod("*");
 	        configuration.setAllowCredentials(true);
 	      

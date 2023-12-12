@@ -2,7 +2,7 @@ import Topbar from '../components/TopBar';
 import CartTile from '../components/CartTile';
 import React, {useState, useEffect } from 'react';
 import axios from 'axios';
-export default function Cart() {
+export default function Cart(props) {
   const [data, setData] = useState([]);
   const [error, setError] = useState([]);
 
@@ -29,7 +29,7 @@ export default function Cart() {
   }
     return (    
           <div className='cart'>
-            <Topbar/>
+            <Topbar user={props.user}/>
             <ul>
             {data.map(product => ( 
             <li key={product.id}><CartTile id={product.id} name={product.productName} amount={product.amount}price={product.price.toFixed(2)} onRemove={remove_item} seller={product.seller}/></li>         

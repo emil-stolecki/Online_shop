@@ -5,7 +5,7 @@ import {
   Route,
   useParams
 } from "react-router-dom";
-
+import React, { useState } from 'react';
 import Home from './pages/Home.js';
 import Register from './pages/Register.js';
 import Login from './pages/Login.js';
@@ -15,15 +15,17 @@ import Cart from './pages/Cart.js';
 import Checkout from './pages/Checkout.js';
 
 function App() {
+
+
   return (    
     <Router>
       <Routes>
-        <Route path="/home" element={<Home/>} />
+        <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register/>} />
-        <Route path="/login" element={<Login/>} />
+        <Route path="/login" element={<Login />} />
         <Route path="/product" element={<Product/>} />
-        <Route path="/profile" element={<Profile/>} />
-        <Route path="/cart" element={<Cart/>} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout/>} />
       </Routes>
     </Router>  

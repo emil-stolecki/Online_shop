@@ -13,7 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.example.OnlineShop.Database.Dtos.UserLoginDto;
+import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
 import com.example.OnlineShop.Database.Models.RoleModel;
 import com.example.OnlineShop.Database.Models.UserModel;
@@ -37,29 +37,17 @@ public class UserRepositoryTest {
 	@Transactional
 	public void findDtoByLoginTest() {
 		String login="john";
-		Optional<UserLoginDto> optuser= userRepo.findDtoByLogin(login);
-		UserLoginDto user=optuser.orElse(null);
+		Optional<AuthenticatedUserDto> optuser= userRepo.findDtoByLogin(login);
+		AuthenticatedUserDto user=optuser.orElse(null);
 		System.out.println(user);
 		assertThat(user).isNotNull()
 		   .hasFieldOrPropertyWithValue("login", login)
-		   .hasFieldOrPropertyWithValue("email", "john@gmail.com")
-		   .hasFieldOrPropertyWithValue("encryptedPassword", "dsbfjdsfg");
+		   .hasFieldOrPropertyWithValue("email", "john@gmail.com");
+		   
 		
 	}
 	
-	@Test
-	@Transactional
-	public void findDtoByEmailTest() {
-		String email="annn@gmail.com";
-		Optional<UserLoginDto> optuser= userRepo.findDtoByEmail(email);
-		UserLoginDto user=optuser.orElse(null);
-		System.out.println(user);
-		assertThat(user).isNotNull()
-		   .hasFieldOrPropertyWithValue("login", "ann")
-		   .hasFieldOrPropertyWithValue("email", email)
-		   .hasFieldOrPropertyWithValue("encryptedPassword", "hfhgfhhgf");
-		
-	}
+	
 	
 	@Test
 	@Transactional

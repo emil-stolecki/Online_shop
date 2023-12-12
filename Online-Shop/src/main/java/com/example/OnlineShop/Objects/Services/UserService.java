@@ -1,5 +1,6 @@
 package com.example.OnlineShop.Objects.Services;
 
+import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
 
@@ -12,5 +13,6 @@ public interface UserService {
 	boolean deleteprofile(Long id);
 	
 	UserDto getUserDetails(long id);
+	AuthenticatedUserDto getAuthenticatedUser (String login);
 	
 }

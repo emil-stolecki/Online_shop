@@ -16,7 +16,7 @@ public class Filter {
 		this.category = "%";
 		this.name     = null;
 		this.offset   = 0;
-		this.limit=25;
+		this.limit=10;
 	}
 	public Double getMinPrice() {
 		return minPrice;

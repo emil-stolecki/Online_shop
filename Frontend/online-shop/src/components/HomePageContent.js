@@ -24,15 +24,17 @@ export default function HomePageContent(props) {
     useEffect(() => {       
           const handlePostRequest = async () => {
            
-        
             try {
               const response = await axios.post('http://localhost:8081/filter', props.filter,{withCredentials: true,});
               setData(response.data);
               console.log(response.data)
-              if (props.filter.name==null &&props.filter.category==null&&props.filter.min==null&&props.filter.max==null){
+             
+                console.log("here")
                 const response2 = await axios.post('http://localhost:8081/filter/count', props.filter,{withCredentials: true,});
                 props.handleCount(response2.data)
-              }
+                console.log("count")
+                console.log(response2.data)
+              
              
             } catch (error) {
               setError(error.message);

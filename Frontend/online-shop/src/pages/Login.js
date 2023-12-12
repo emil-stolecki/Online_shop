@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-export default function Login() {
-      const [data, setData] = useState(null);
+export default function Login(props) {
+
+
+
+  const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     login: '',
@@ -19,10 +22,16 @@ export default function Login() {
       
       try {
         
-        const response = await axios.post('http://localhost:8081/login',formData);
-        console.log('Form submitted:', formData);
+        const response = await axios.post('http://localhost:8081/login',formData,{withCredentials: true,headers: {
+          'Content-Type': 'application/json',
+        },});
         setData(response.data);
-        console.log(response.data)
+
+        if(response.data.successfull){
+          localStorage.setItem('userId', response.data.user.id);
+          localStorage.setItem('userName', response.data.user.login);
+          localStorage.setItem('userEmail', response.data.user.email);
+        }
               
       } catch (error) {
         setError(error.message);
@@ -61,7 +70,6 @@ export default function Login() {
                   <div className='clearfix'></div>
                   <button type="submit">Login</button>
             </form >
-           <div className='errorMessage'>{data && data.message}</div>
            <div className='errorMessage'>{error && error}</div>
           </div>    
     );

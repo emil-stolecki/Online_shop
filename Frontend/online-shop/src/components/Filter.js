@@ -6,7 +6,7 @@ export default function Filter(props) {
     const [maxInput, setMaxInput] = useState();
     const [searchInput, setSearchInput] = useState('');
     const [page,setpage] = useState(0);
-    const limit=25
+    const limit=10
     const handleMinPriceChange = (event) => {
         setMinInput(event.target.value);
         props.onFilterChange('min',event.target.value);
@@ -22,6 +22,7 @@ export default function Filter(props) {
 
    const handleNext=()=>{
     if ((page+1)*limit<props.count){
+      console.log("next page")
       props.changepage((prev)=>({
         ...prev,
         ['offset']:page+1
@@ -30,6 +31,7 @@ export default function Filter(props) {
     }
    }
    const handlePrev=()=>{
+    console.log("previous page")
     if (page>0){
       props.changepage((prev)=>({
         ...prev,
@@ -42,6 +44,13 @@ export default function Filter(props) {
       setpage(0);
       props.onConfirm()
    }
+   const handleClear=()=>{
+    props.onClear();
+    setMinInput(null);
+    setMaxInput(null);
+    setSearchInput('');
+
+ }
 
     return (    
           <div className="filter">
@@ -74,7 +83,7 @@ export default function Filter(props) {
             <div className="filter-elem">
             <br/>
             <button onClick={handleConfirm}>Confirm</button>
-            <button onClick={props.onClear}>Clear</button>
+            <button onClick={ handleClear}>Clear</button>
 
             </div>
             <div className='clearfix'></div> 

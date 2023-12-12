@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
 import com.example.OnlineShop.Database.Models.ReviewModel;
@@ -87,6 +88,12 @@ public class User implements UserService{
 	@Override
 	public UserDto getUserDetails(long id) {
 		UserDto user=userRepo.findDtoById(id);
+		return user;
+	}
+
+	@Override
+	public AuthenticatedUserDto getAuthenticatedUser(String login) {
+		AuthenticatedUserDto user=userRepo.findDtoByLogin(login).orElse(null);
 		return user;
 	}
 	
