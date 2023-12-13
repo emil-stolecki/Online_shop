@@ -1,10 +1,13 @@
 package com.example.OnlineShop.Objects.Objects;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
+import com.example.OnlineShop.Database.Dtos.UserCheckLoginDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
 import com.example.OnlineShop.Database.Models.ReviewModel;
@@ -95,6 +98,18 @@ public class User implements UserService{
 	public AuthenticatedUserDto getAuthenticatedUser(String login) {
 		AuthenticatedUserDto user=userRepo.findDtoByLogin(login).orElse(null);
 		return user;
+	}
+
+	@Override
+	public UserCheckLoginDto getCredentialsbyEmail(String email) {
+		Optional<UserCheckLoginDto> credentilas=userRepo.findLoginDtoByEmail(email);
+		return credentilas.orElse(null);
+	}
+
+	@Override
+	public UserCheckLoginDto getCredentialsbyLogin(String login) {
+		Optional<UserCheckLoginDto> credentilas=userRepo.findLoginDtoByLogin(login);
+		return credentilas.orElse(null);
 	}
 	
 	

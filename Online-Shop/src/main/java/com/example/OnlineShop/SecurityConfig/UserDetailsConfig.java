@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,35 +15,41 @@ import org.springframework.stereotype.Service;
 import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 import com.example.OnlineShop.Database.Dtos.UserCheckLoginDto;
 import com.example.OnlineShop.Database.Repositories.UserRepository;
+//import com.example.OnlineShop.Objects.Objects.User;
 
 
 
 @Service
 public class UserDetailsConfig implements UserDetailsService{
+	//private User userService;
 	private UserRepository userRepo;
 	@Autowired
-	public UserDetailsConfig(UserRepository userRepo) {
-		
-		this.userRepo = userRepo;
+	public UserDetailsConfig(/*User userService,*/UserRepository userRepo) {
+		this.userRepo=userRepo;
+		//this.userService = userService;
 	}
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		UserCheckLoginDto user;
 		if(username.contains("@")) {
-			user = userRepo.findLoginDtoByEmail(username).orElseThrow(null);
+			//user = userService.getCredentialsbyLogin(username);
+			user = userRepo.findLoginDtoByEmail(username).orElse(null);
+			
 			}
 		else {
-			
-			user = userRepo.findLoginDtoByLogin(username).orElseThrow(null);
+			user = userRepo.findLoginDtoByLogin(username).orElse(null);
+			//user = userService.getCredentialsbyEmail(username);
 			
 		}
 		if(user!= null) {
-			
-			User authUser= new User(
+			ArrayList<String> roles=new ArrayList<String>();
+			roles.add(user.role());
+			UserPrincipal authUser= new UserPrincipal(
 					
+					user.id(),
 					user.login(),
 					user.password(),
-					new ArrayList<String>().stream().map((role)->new SimpleGrantedAuthority(""))
+					roles.stream().map((role)->new SimpleGrantedAuthority(role))
 					.collect(Collectors.toList())
 			);
 			return authUser;		

@@ -5,35 +5,50 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class UserPrincipal implements UserDetails{
 
 	
 
+	private final Long userId;
 	private final String login;
+	private final Collection<? extends GrantedAuthority> roles;
+	@JsonIgnore
 	private final String password;
 	
 
-	public UserPrincipal(String login, String password) {
+	public UserPrincipal(Long userId,String login, String password,Collection<? extends GrantedAuthority> roles ) {
+		this.userId=userId;
 		this.login = login;
 		this.password = password;
+		this.roles=roles;
+	}
+	public UserPrincipal(Long userId,String login,Collection<? extends GrantedAuthority> roles ) {
+		this.userId=userId;
+		this.login = login;
+		this.password ="";
+		this.roles=roles;
 	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+	public Long getId() {
+		return userId;
 	}
 	
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
 
+		return roles;
+	}
+	
+	
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
 		return password;
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
 		return login;
 	}
 

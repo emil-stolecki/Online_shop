@@ -17,10 +17,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.example.OnlineShop.SecurityConfig.JWT.JWTFilter;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -30,16 +33,20 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class FilterChainConfig {
 	  private UserDetailsConfig useDetailsService;
+	  private JWTFilter jwtFilter;
 	    
 	    @Autowired
-		public FilterChainConfig(UserDetailsConfig useDetailsService) {
+		public FilterChainConfig(UserDetailsConfig useDetailsService,JWTFilter jwtFilter) {
 			this.useDetailsService = useDetailsService;
+			this.jwtFilter=jwtFilter;
 		}
 
 
 		@Bean
 	    public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception {
 	    	
+			http.addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
+			
 	    	http
 	    	.cors(Customizer.withDefaults())
 	    	.csrf(AbstractHttpConfigurer::disable)	
@@ -50,7 +57,7 @@ public class FilterChainConfig {
 	    	.authorizeHttpRequests(auth->{
 	    		auth.requestMatchers("/","/home", "/register","/login","/login?error=true",
 	    							"/categories","/filter","/filter/count","/product",
-	    							"/product/review","/cart","/profile").permitAll()
+	    							"/product/review","/check-token").permitAll()
 	    		.requestMatchers(HttpMethod.OPTIONS).permitAll()
 	    		.anyRequest().authenticated();
 	    		})

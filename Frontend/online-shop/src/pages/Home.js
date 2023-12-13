@@ -65,7 +65,7 @@ export default function Home(props) {
 
     return (    
           <div>
-            <Topbar user={props.user}/>
+            <Topbar isLogged={props.islogged} setLogged={props.setLogged}/>
             <div className='clearfix'></div>
             <Filter onFilterChange={ handleFilterChange } onConfirm={handleConfirm} onClear={clearFilter} count={filterCount} changepage={setPostFilterData} />
             <div className='clearfix'></div>

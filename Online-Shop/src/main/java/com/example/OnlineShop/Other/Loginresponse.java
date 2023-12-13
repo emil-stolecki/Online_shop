@@ -1,15 +1,14 @@
 package com.example.OnlineShop.Other;
 
-import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 
 public class Loginresponse {
 	private boolean isSuccessfull;
-    private AuthenticatedUserDto user;
+    private String token;
     
     
-	public Loginresponse(boolean isSuccessfull, AuthenticatedUserDto user) {	
+	public Loginresponse(boolean isSuccessfull,String token) {	
 		this.isSuccessfull = isSuccessfull;
-		this.user = user;
+		this.token=token;
 	}
 
 
@@ -17,8 +16,9 @@ public class Loginresponse {
 		return isSuccessfull;
 	}
 
-	public AuthenticatedUserDto getUser() {
-		return user;
+	
+	public String getToken() {
+		return token;
 	}
 
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 import com.example.OnlineShop.Database.Dtos.CategoryDto;
 import com.example.OnlineShop.Database.Dtos.ItemInCartDto;
@@ -36,6 +38,9 @@ import com.example.OnlineShop.Objects.Objects.User;
 import com.example.OnlineShop.Other.Filter;
 import com.example.OnlineShop.Other.Loginresponse;
 import com.example.OnlineShop.Other.SimpleResponse;
+import com.example.OnlineShop.SecurityConfig.UserPrincipal;
+import com.example.OnlineShop.SecurityConfig.JWT.JWTdecoder;
+import com.example.OnlineShop.SecurityConfig.JWT.JWTissuer;
 import com.example.OnlineShop.Kafka.Message.Message;
 
 @RestController
@@ -49,13 +54,15 @@ public class WebController {
     private final Cart cart;
     private final Review review;
     private final AuthenticationManager authManager;
-    private KafkaTemplate<Long, Message> kafkatemplate;
-	private String topic;
+    private final KafkaTemplate<Long, Message> kafkatemplate;
+	private final String topic;
+	private final JWTissuer jwtIssuer;
+	private final JWTdecoder decoder;
 	
 	@Autowired
 	public WebController (User user,Product product,Cart cart,Review review,
 			KafkaTemplate<Long, Message> kafkatemplate,
-			AuthenticationManager authManager) {
+			AuthenticationManager authManager, JWTissuer jwtIssuer,JWTdecoder decoder) {
 			
 		this.user=user;
 		this.product=product;
@@ -64,31 +71,47 @@ public class WebController {
 		this.kafkatemplate=kafkatemplate;
 		this.topic="user-activity";
 		this.authManager=authManager;
+		this.jwtIssuer=jwtIssuer;
+		this.decoder=decoder;
+		
 	}
 	
 	@PostMapping("/login")
 	public ResponseEntity<Loginresponse> login(@RequestBody UserLoginInputDto input) {
+		
 		AuthenticatedUserDto authUser=null;
 		Boolean success =null;
+		var token="";
 		try {
 			 var authentication = authManager.authenticate(
 				new UsernamePasswordAuthenticationToken(input.login(),input.password())
 				
 				);
+
 			 	authUser = user.getAuthenticatedUser(authentication.getName());
 			 	success = true;
+			 	SecurityContextHolder.getContext().setAuthentication(authentication);
+			 	var principal = (UserPrincipal) authentication.getPrincipal();
 
+			 	token =jwtIssuer.issue(
+			 			principal.getId(),
+			 			principal.getUsername(),
+			 			principal.getAuthorities());
+			 	System.out.println(authentication.getName());
 		}catch(Exception e) {
 			success=false;
 
 		}
-		Loginresponse r = new Loginresponse(success,authUser);
+		Loginresponse r = new Loginresponse(success,token);
 		return ResponseEntity.ok(r);
 		
 	}
 	
+	
+	
 	@GetMapping("/home")
 	public ResponseEntity<List<ProductLessDto>> home() {
+		
 		
 		List<ProductLessDto> popularProducts = product.getPopular();		
 		return ResponseEntity.ok(popularProducts);
@@ -289,10 +312,17 @@ public class WebController {
 	}
 	
 	
-	@PostMapping("/cart")
-	public ResponseEntity<List<ItemInCartDto>> getUsersCart(@RequestBody Long userId) {
+	@GetMapping("/cart")
+	public ResponseEntity<List<ItemInCartDto>> getUsersCart() {
 
-		List<ItemInCartDto> items=cart.getProducts(userId);		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		List<ItemInCartDto> items=null;
+		if (authentication != null && authentication.isAuthenticated()) {		   
+		   var principal = (UserPrincipal) authentication.getPrincipal();
+		   Long userId = principal.getId();
+		   items=cart.getProducts(userId);	
+		 }
+	
 		return ResponseEntity.ok(items);
 	}
 	
@@ -319,6 +349,19 @@ public class WebController {
 		
 		return ResponseEntity.ok(r);
 	}
+	
+	@PostMapping("/check-token")
+	public ResponseEntity<Boolean> logout(@RequestBody String token) {
+		System.out.println(token);
+		Boolean response=null;
+		try {			
+			response = decoder.checkExpired(token);
+		}catch(Exception e) {			
+			response =false;
+		}
+		return ResponseEntity.ok(response);
+	}
+	
 	
 	
 	//for registration of a new user

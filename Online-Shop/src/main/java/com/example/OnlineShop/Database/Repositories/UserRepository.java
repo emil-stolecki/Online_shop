@@ -22,9 +22,9 @@ public interface UserRepository extends JpaRepository<UserModel,Long>{
 	//find by login and find by email will be used for authentication
 	@Query(value = "SELECT new "+dto2+"(u.id,u.login,u.email) FROM users u WHERE u.login = :login")
 	Optional<AuthenticatedUserDto> findDtoByLogin(@Param("login")String login);
-	@Query(value = "SELECT new "+dto3+"(u.login,u.email,u.encryptedPassword) FROM users u WHERE u.email = :email")
+	@Query(value = "SELECT new "+dto3+"(u.id,u.login,u.encryptedPassword,u.role.name) FROM users u WHERE u.email = :email")
 	Optional<UserCheckLoginDto> findLoginDtoByEmail(@Param("email")String email);
-	@Query(value = "SELECT new "+dto3+"(u.login,u.email,u.encryptedPassword) FROM users u WHERE u.login = :login")
+	@Query(value = "SELECT new "+dto3+"(u.id,u.login,u.encryptedPassword,u.role.name) FROM users u WHERE u.login = :login")
 	Optional<UserCheckLoginDto> findLoginDtoByLogin(@Param("login")String login);
 	//find by id returns the entire record
 	@Query(value = "SELECT new "+dto1+

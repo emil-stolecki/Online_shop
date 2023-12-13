@@ -89,7 +89,7 @@ export default function Product(props) {
 
   return (    
     <div>
-       <Topbar user={props.user}/>
+       <Topbar isLogged={props.islogged} setLogged={props.setLogged}/>
         <div className='clearfix'></div>
         <div className='product'>
           

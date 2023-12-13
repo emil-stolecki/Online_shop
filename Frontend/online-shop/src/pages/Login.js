@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 export default function Login(props) {
 
 
@@ -10,6 +11,7 @@ export default function Login(props) {
     login: '',
     password: ''
   });
+  const navigate = useNavigate();
   const handleChange = (e) => {
       const { name, value } = e.target;
       setFormData((prevData) => ({
@@ -19,18 +21,16 @@ export default function Login(props) {
     };
   const handleSubmit = async (e) => {
       e.preventDefault();    
-      
       try {
-        
+        console.log(formData)
         const response = await axios.post('http://localhost:8081/login',formData,{withCredentials: true,headers: {
           'Content-Type': 'application/json',
         },});
         setData(response.data);
-
         if(response.data.successfull){
-          localStorage.setItem('userId', response.data.user.id);
-          localStorage.setItem('userName', response.data.user.login);
-          localStorage.setItem('userEmail', response.data.user.email);
+          localStorage.setItem('token',response.data.token)
+          console.log('logged in');
+          navigate('/home');
         }
               
       } catch (error) {
@@ -71,6 +71,8 @@ export default function Login(props) {
                   <button type="submit">Login</button>
             </form >
            <div className='errorMessage'>{error && error}</div>
+           <div className='errorMessage'>{data && !data.successfull &&"Błędny login lub hasło"}</div>
+           
           </div>    
     );
   }

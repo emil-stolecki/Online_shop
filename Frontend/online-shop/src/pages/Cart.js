@@ -11,9 +11,10 @@ export default function Cart(props) {
     const fetchData = async () => {
       try {
         const userId=1;
-        const response = await axios.post('http://localhost:8081/cart',userId, {
+        const response = await axios.get('http://localhost:8081/cart', {
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           },});
         setData(response.data);
         console.log(response.data)
@@ -29,7 +30,7 @@ export default function Cart(props) {
   }
     return (    
           <div className='cart'>
-            <Topbar user={props.user}/>
+            <Topbar isLogged={props.islogged}/>
             <ul>
             {data.map(product => ( 
             <li key={product.id}><CartTile id={product.id} name={product.productName} amount={product.amount}price={product.price.toFixed(2)} onRemove={remove_item} seller={product.seller}/></li>         
