@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom';
 
 export default function TopBar(props) {
@@ -15,7 +16,7 @@ export default function TopBar(props) {
 
   const handleLogoutClick = () => {   
     localStorage.setItem('token',"")
-    navigate("/logout")
+    navigate("/home")
 
   };
   const handleProfileClick = () => {
@@ -29,8 +30,8 @@ export default function TopBar(props) {
     if(localStorage.getItem('token').length>0){
       return(
         <div className="register-login-profile">
-              <button onClick={handleCartClick} >cart</button>
-              <button onClick={handleProfileClick} >profile</button>
+              {(props.parent!=='cart')&&<button onClick={handleCartClick} >cart</button>}
+              {(props.parent!=='profile')&&<button onClick={handleProfileClick} >profile</button>}
               <button onClick={handleLogoutClick} >logout</button>
             </div>   
       )

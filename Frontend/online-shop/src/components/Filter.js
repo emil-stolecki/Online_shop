@@ -22,7 +22,6 @@ export default function Filter(props) {
 
    const handleNext=()=>{
     if ((page+1)*limit<props.count){
-      console.log("next page")
       props.changepage((prev)=>({
         ...prev,
         ['offset']:page+1
@@ -31,7 +30,6 @@ export default function Filter(props) {
     }
    }
    const handlePrev=()=>{
-    console.log("previous page")
     if (page>0){
       props.changepage((prev)=>({
         ...prev,

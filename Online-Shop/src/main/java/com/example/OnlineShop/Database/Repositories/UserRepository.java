@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<UserModel,Long>{
 	Optional<UserCheckLoginDto> findLoginDtoByLogin(@Param("login")String login);
 	//find by id returns the entire record
 	@Query(value = "SELECT new "+dto1+
-			"(u.id,u.login,u.email,u.firstName,u.lastName,u.encryptedPassword,u.joined,u.role.id) FROM users u WHERE u.id = :id")
+			"(u.id,u.login,u.email,u.firstName,u.lastName,u.joined) FROM users u WHERE u.id = :id")
 	UserDto findDtoById(@Param("id")Long id);
 	
 	Optional<UserModel> findById(Long id);

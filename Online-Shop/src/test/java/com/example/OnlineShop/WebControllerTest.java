@@ -23,7 +23,6 @@ import com.example.OnlineShop.Database.Dtos.ItemInCartDto;
 import com.example.OnlineShop.Database.Dtos.ReviewDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
-import com.example.OnlineShop.Database.Dtos.User_productDto;
 import com.example.OnlineShop.Other.Filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -111,12 +110,11 @@ public class WebControllerTest {
 	
 	@Test
 	public void getProductTest() throws Exception{
-		User_productDto up = new User_productDto(1L,1L);
-		
-		
+
+
 		String responseContent=mockMvc.perform(MockMvcRequestBuilders.post("/product")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(up)))
+				.content(objectMapper.writeValueAsString(1L)))
 					
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -223,7 +221,7 @@ public class WebControllerTest {
 	@Test
 	@Transactional
 	public void updateProfileTest() throws Exception{
-		UserDto userDto = new UserDto(1L,null,null,"NewName",null,null,null,null);
+		UserDto userDto = new UserDto(1L,null,null,"NewName",null,null);
 		String responseContent=mockMvc.perform(MockMvcRequestBuilders.post("/profile/edit")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(userDto)))
@@ -265,7 +263,7 @@ public class WebControllerTest {
 	@Test
 	@Transactional
 	public void updateProductAmountInCartTest() throws Exception{
-		ItemInCartDto item=new ItemInCartDto(1L,10L,"",3,0d);
+		ItemInCartDto item=new ItemInCartDto(1L,10L,"",3,0d,20);
 		mockMvc.perform(MockMvcRequestBuilders.post("/product/update-amount")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(item)))

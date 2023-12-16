@@ -62,7 +62,7 @@ public class UserModel {
 	@CreationTimestamp
 	private LocalDateTime joined;
 	
-	@ManyToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="role_id")
 	private RoleModel role=new RoleModel();
 	

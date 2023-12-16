@@ -14,16 +14,16 @@ public interface CartRepository extends JpaRepository<ItemInCartModel,Long>{
 	
 	String dto="com.example.OnlineShop.Database.Dtos.ItemInCartDto";
 	
-	@Query(value ="SELECT new "+dto+"(c.id,c.product.id,c.product.name,c.amount) "
+	@Query(value ="SELECT new "+dto+"(c.id,c.product.id,c.product.name,c.amount,c.product.price,c.product.amountInStock) "
 					+ "FROM items_in_carts c WHERE c.id = :id")
 	Optional<ItemInCartDto> findDtoById(@Param("id")Long id);
 	//Optional<ItemInCartModel> findByUser_IdAndProduct_Id(Long userId,Long productId);
-	@Query(value ="SELECT new "+dto+"(c.id,c.product.id,c.product.name,c.amount,c.product.price) "
+	@Query(value ="SELECT new "+dto+"(c.id,c.product.id,c.product.name,c.amount,c.product.price,c.product.amountInStock) "
 			+ "FROM items_in_carts c WHERE c.user.id = :user_id")
 	List<ItemInCartDto> findDtoByUser_id(@Param("user_id")Long id);
 	
 	Optional<ItemInCartModel> findById(Long id);
-	
+	Optional<ItemInCartModel> findByUser_idAndProduct_id(Long userid, Long productid);
 	
 	void removeByUser_id(Long userId);
 	

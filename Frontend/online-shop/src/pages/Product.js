@@ -6,9 +6,10 @@ import axios from 'axios';
 import missingImage from '../images/missing_image_tile.png';
 
 export default function Product(props) {
+
   const [data, setData] = useState([]);
   const [error, setError] = useState([]);
-
+  const [newReview,setNewReview]=useState(null)
   const [quantity,setQuantity]=useState(1);
 
   const location = useLocation();
@@ -18,11 +19,12 @@ export default function Product(props) {
   const id = searchParams.get('id');
   
   useEffect(() => {
+    document.body.style.cursor = 'wait'  
     const fetchData = async () => {
       try {
-        const userId=(props.user==null)?0:props.user.id;
-        const body = { userId:  userId, productId: id };
-        const response = await axios.post('http://localhost:8081/product',body);
+        const response = await axios.post('http://localhost:8081/product',id,{headers: {
+          'Content-Type': 'application/json',
+        }});
         setData(response.data);
         console.log(response.data)
       } catch (error) {
@@ -30,6 +32,7 @@ export default function Product(props) {
       }
     };
     fetchData();
+    document.body.style.cursor = 'default'
   }, []); 
 
   let result = "";
@@ -55,7 +58,10 @@ export default function Product(props) {
   }
   
   function increase(){
-    setQuantity(quantity+1)
+    if(quantity<data.amountInStock){
+      setQuantity(quantity+1)
+    }
+    
   }
   function decrease(){
     if(quantity>1){
@@ -87,9 +93,49 @@ export default function Product(props) {
     }
   }
 
+  function can_add_review(){
+    if(localStorage.getItem('token')==""){
+      return(
+      <p>-----zaloguj się żeby dodać recenzję-----</p>
+      )
+    }
+    else{
+      return(
+        <div>
+          <textarea name="new_review" value={newReview} onChange={handleChange}></textarea>
+          <button onClick={handleSubmitReview}>Dodaj</button>
+        </div>
+      )
+    }
+    
+  }
+  const handleChange = (e) => {
+    setNewReview(e.target.value);
+  };
+  function handleSubmitReview() {
+    //////TODO
+  };
+  async function add_to_cart(){
+    document.body.style.cursor = 'wait'  
+      const body ={
+        productId:id,
+        amount:quantity
+      }
+      try {        
+        const response = await axios.post('http://localhost:8081/cart/add-product',body,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },});
+      } catch (error) {
+        setError(error.message);
+      }
+       
+    document.body.style.cursor = 'default'
+  }
   return (    
     <div>
-       <Topbar isLogged={props.islogged} setLogged={props.setLogged}/>
+       <Topbar parent='product'/>
         <div className='clearfix'></div>
         <div className='product'>
           
@@ -138,12 +184,12 @@ export default function Product(props) {
                 <p>{quantity}</p>
                 </div>
               <div className='clearfix'></div>
-              <button className='add_to_cart_button'>Do Koszyka</button>
+              <button className='add_to_cart_button' onClick={add_to_cart}>Do Koszyka</button>
             </div>
             <div className='reviews'>
             
                   <h2>Recenzje:</h2>
-                  <p>-----zaloguj się żeby dodać recenzję-----</p>
+                  {can_add_review()}
                   {get_reviews()}
             </div>
           </div>

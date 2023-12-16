@@ -32,16 +32,15 @@ public class UserDetailsConfig implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		UserCheckLoginDto user;
 		if(username.contains("@")) {
-			//user = userService.getCredentialsbyLogin(username);
 			user = userRepo.findLoginDtoByEmail(username).orElse(null);
 			
 			}
 		else {
 			user = userRepo.findLoginDtoByLogin(username).orElse(null);
-			//user = userService.getCredentialsbyEmail(username);
 			
 		}
 		if(user!= null) {
+			
 			ArrayList<String> roles=new ArrayList<String>();
 			roles.add(user.role());
 			UserPrincipal authUser= new UserPrincipal(

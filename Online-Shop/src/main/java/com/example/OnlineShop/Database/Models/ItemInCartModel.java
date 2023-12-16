@@ -27,12 +27,12 @@ public class ItemInCartModel {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="user_id",referencedColumnName="id")
 	@NotNull
 	private UserModel user;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="product_id",referencedColumnName="id")
 	@NotNull
 	private ProductModel product;

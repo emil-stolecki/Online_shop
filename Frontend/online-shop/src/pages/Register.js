@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Register() {
@@ -12,7 +13,7 @@ export default function Register() {
     password: '',
     password2: '',
   });
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -23,7 +24,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();    
-    console.log('Form submitted:', formData);
+    document.body.style.cursor = 'wait'  
     try {
       const response = await axios.post('http://localhost:8081/register',formData);
       setData(response.data);
@@ -32,7 +33,7 @@ export default function Register() {
       setError(error.message);
     }
     
-
+    document.body.style.cursor = 'default'
   };
 
   return (
@@ -123,10 +124,13 @@ export default function Register() {
         <br />
         <div className='line'></div>
         <div className='clearfix'></div>
-        <button onSubmit={handleSubmit} type="submit">Register</button>
+        <button  type="submit">Register</button>
       </form>
 
       <div className='errorMessage'>{data && data.message}</div>
+      <br/>
+      <p>Masz już konto?</p>
+      <button onClick={()=>{navigate('/login')}} >Zaloguj</button>
     </div>
   );
 }

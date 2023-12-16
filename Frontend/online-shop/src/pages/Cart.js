@@ -5,19 +5,21 @@ import axios from 'axios';
 export default function Cart(props) {
   const [data, setData] = useState([]);
   const [error, setError] = useState([]);
+  const [totalCost,setTotalcost] = useState(0);
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId=1;
         const response = await axios.get('http://localhost:8081/cart', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           },});
         setData(response.data);
-        console.log(response.data)
+        let totCost =0
+        response.data.map(product => (totCost=totCost+(product.amount*product.price)))
+        setTotalcost(totCost)
       } catch (error) {
         setError(error.message);
       }
@@ -30,14 +32,20 @@ export default function Cart(props) {
   }
     return (    
           <div className='cart'>
-            <Topbar isLogged={props.islogged}/>
+            <Topbar parent='cart'/>
             <ul>
-            {data.map(product => ( 
-            <li key={product.id}><CartTile id={product.id} name={product.productName} amount={product.amount}price={product.price.toFixed(2)} onRemove={remove_item} seller={product.seller}/></li>         
+            {data.map(product => (         
+            <li key={product.id}><CartTile id={product.id} name={product.productName} amount={product.amount}price={product.price} onRemove={remove_item} seller={product.seller} maxAmount={product.amountInStock} changeCost={setTotalcost} totalCost={totalCost}/></li>         
           ))}
             </ul>
 
-            <button className='checkout'>Do kasy</button>
+            {data.length>0&&
+            <div>
+              <h2>Razem: {totalCost.toFixed(2)}</h2>
+              <button className='checkout'>Do kasy</button>
+              </div>
+            }
+            {data.length==0&&<p>Trochę tu pusto</p>}
           </div>
         
     );

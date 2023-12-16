@@ -30,20 +30,27 @@ public class Cart implements CartService{
 
 
 	@Override
-	public boolean addToCart(Long userId, Long productId) {
+	public boolean addToCart(Long userId, Long productId, int amount) {
 		
 		boolean isSuccessfull=false;
 		ItemInCartModel iic = new ItemInCartModel();
-		iic.setUser(userRepo.findById(userId).orElse(null));
-		iic.setProduct(productRepo.findById(productId).orElse(null));
-		iic.setAmount(1);
-		
-		
-		if (iic.getUserId() !=null && iic.getProduct()!=null) {
-			ItemInCartModel result=cartRepo.save(iic);
-			if (result!=null) isSuccessfull=true;
-				
+		ItemInCartModel existing =cartRepo.findByUser_idAndProduct_id(userId, productId).orElse(null);
+		if(existing==null) {
+			iic.setUser(userRepo.findById(userId).orElse(null));
+			iic.setProduct(productRepo.findById(productId).orElse(null));
+			iic.setAmount(amount);
+			if (iic.getUserId() !=null && iic.getProduct()!=null) {			
+				ItemInCartModel result=cartRepo.save(iic);
+				if (result!=null) isSuccessfull=true;	
+			}
 		}
+		else {
+			existing.setAmount(existing.getAmount()+amount);
+			ItemInCartModel result=cartRepo.save(existing);
+			if (result!=null) isSuccessfull=true;	
+		}
+		
+		
 		
 		return isSuccessfull;
 	}

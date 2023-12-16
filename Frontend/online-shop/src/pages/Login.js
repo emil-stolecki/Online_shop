@@ -20,7 +20,8 @@ export default function Login(props) {
       }));
     };
   const handleSubmit = async (e) => {
-      e.preventDefault();    
+      e.preventDefault();  
+      document.body.style.cursor = 'wait'  
       try {
         console.log(formData)
         const response = await axios.post('http://localhost:8081/login',formData,{withCredentials: true,headers: {
@@ -29,6 +30,7 @@ export default function Login(props) {
         setData(response.data);
         if(response.data.successfull){
           localStorage.setItem('token',response.data.token)
+          localStorage.setItem('id',response.data.userId)
           console.log('logged in');
           navigate('/home');
         }
@@ -36,7 +38,7 @@ export default function Login(props) {
       } catch (error) {
         setError(error.message);
       }
-      
+      document.body.style.cursor = 'default'
   
     };
     return (    
@@ -72,7 +74,8 @@ export default function Login(props) {
             </form >
            <div className='errorMessage'>{error && error}</div>
            <div className='errorMessage'>{data && !data.successfull &&"Błędny login lub hasło"}</div>
-           
+            <p>Nie masz jeszcze konta??</p>
+            <button onClick={()=>{navigate('/register')}} >Zarejestruj</button>
           </div>    
     );
   }

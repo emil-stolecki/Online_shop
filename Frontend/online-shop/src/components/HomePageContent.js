@@ -29,7 +29,6 @@ export default function HomePageContent(props) {
               setData(response.data);
               console.log(response.data)
              
-                console.log("here")
                 const response2 = await axios.post('http://localhost:8081/filter/count', props.filter,{withCredentials: true,});
                 props.handleCount(response2.data)
                 console.log("count")
@@ -48,7 +47,12 @@ export default function HomePageContent(props) {
           }
       }, [props.filter]);
 
-  
+      useEffect(()=>{
+        props.onConfirm()
+      
+      },[props.category])
+     
+
     return (
           <div className="content">
            {error && <p>Error: {error}</p>}

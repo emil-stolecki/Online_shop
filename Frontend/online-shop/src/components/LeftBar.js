@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Button from '../components/Button';
 
 export default function LeftBar(props) {
   const [data, setData] = useState([]);
   const [error, setError] = useState([]);
+  const[buttons, setButtons]=useState(Array.from({ length: 10 }, () => false))
 
-  const handlePickingCategory=(cat)=>{
-    props.onFilterChange('category',cat);
-    
+  const handlePickingCategory=(cat)=>{    
+    props.onCategoryChange(cat)  
   };
 
     useEffect(() => {
@@ -30,7 +31,9 @@ export default function LeftBar(props) {
             <div className="categories">
               <ul>
               {data.map(category => (
-            <li><button onClick={()=>handlePickingCategory(category.name)} key={category.id}> {category.name}</button></li>
+            <li>
+              <Button id={category.id-1} name={category.name} altName={""} function={()=>handlePickingCategory(category.name)} adjustState={setButtons} state={buttons}/>
+            </li>
             ))}
               </ul>
             </div>           

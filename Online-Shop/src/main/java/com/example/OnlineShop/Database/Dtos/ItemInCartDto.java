@@ -7,7 +7,8 @@ public record ItemInCartDto(Long id,
 							Long productId,
 							String productName,
 							int amount,
-							double price) {
+							double price,
+							int amountInStock) {
 	
 	
 }

@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useParams
 } from "react-router-dom";
 import Home from './pages/Home.js';
 import Register from './pages/Register.js';
@@ -12,13 +11,14 @@ import Product from './pages/Product.js';
 import Profile from './pages/Profile.js';
 import Cart from './pages/Cart.js';
 import Checkout from './pages/Checkout.js';
+import Empty from './pages/Empty.js';
 
 function App() {
-
 
   return (    
     <Router>
       <Routes>
+        <Route path="/" element={<Empty/>}></Route>
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register/>} />
         <Route path="/login" element={<Login />} />

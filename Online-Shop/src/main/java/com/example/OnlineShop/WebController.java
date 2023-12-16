@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,14 +24,18 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 import com.example.OnlineShop.Database.Dtos.CategoryDto;
 import com.example.OnlineShop.Database.Dtos.ItemInCartDto;
+import com.example.OnlineShop.Database.Dtos.PasswordDto;
 import com.example.OnlineShop.Database.Dtos.ProductDto;
 import com.example.OnlineShop.Database.Dtos.ProductLessDto;
+import com.example.OnlineShop.Database.Dtos.Product_amount;
 import com.example.OnlineShop.Database.Dtos.ReviewDto;
+import com.example.OnlineShop.Database.Dtos.UserCheckLoginDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserLoginInputDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
-import com.example.OnlineShop.Database.Dtos.User_productDto;
 import com.example.OnlineShop.Database.Models.CategoryModel;
+import com.example.OnlineShop.Database.Models.UserModel;
+import com.example.OnlineShop.Database.Repositories.UserRepository;
 import com.example.OnlineShop.Objects.Objects.Cart;
 import com.example.OnlineShop.Objects.Objects.Product;
 import com.example.OnlineShop.Objects.Objects.Review;
@@ -58,6 +63,7 @@ public class WebController {
 	private final String topic;
 	private final JWTissuer jwtIssuer;
 	private final JWTdecoder decoder;
+
 	
 	@Autowired
 	public WebController (User user,Product product,Cart cart,Review review,
@@ -74,21 +80,22 @@ public class WebController {
 		this.jwtIssuer=jwtIssuer;
 		this.decoder=decoder;
 		
+		
 	}
 	
 	@PostMapping("/login")
 	public ResponseEntity<Loginresponse> login(@RequestBody UserLoginInputDto input) {
 		
-		AuthenticatedUserDto authUser=null;
-		Boolean success =null;
-		var token="";
-		try {
-			 var authentication = authManager.authenticate(
-				new UsernamePasswordAuthenticationToken(input.login(),input.password())
-				
-				);
 
-			 	authUser = user.getAuthenticatedUser(authentication.getName());
+		Boolean success =null;		
+		var token="";
+		Long id=null;
+		try {
+
+			 var authentication = authManager.authenticate(
+				new UsernamePasswordAuthenticationToken(input.login(),input.password())				
+				);			
+			 	AuthenticatedUserDto authUser = user.getAuthenticatedUser(authentication.getName());
 			 	success = true;
 			 	SecurityContextHolder.getContext().setAuthentication(authentication);
 			 	var principal = (UserPrincipal) authentication.getPrincipal();
@@ -97,12 +104,11 @@ public class WebController {
 			 			principal.getId(),
 			 			principal.getUsername(),
 			 			principal.getAuthorities());
-			 	System.out.println(authentication.getName());
 		}catch(Exception e) {
 			success=false;
-
+			e.printStackTrace();
 		}
-		Loginresponse r = new Loginresponse(success,token);
+		Loginresponse r = new Loginresponse(success,token,id);
 		return ResponseEntity.ok(r);
 		
 	}
@@ -145,7 +151,7 @@ public class WebController {
 		
 		String message="";
 		boolean success=false;
-		if(validateInput(newUser)) {
+		if(validateLogin(newUser.login()) && validateEmail(newUser.email())&& validatePassword(newUser.password())) {
 			if(newUser.password().equals(newUser.password2())){
 				try {
 				this.user.register(newUser);
@@ -170,9 +176,9 @@ public class WebController {
 	
 	
 	@PostMapping("/product")
-	public ResponseEntity<ProductDto> getProductDetails(@RequestBody User_productDto up) {
+	public ResponseEntity<ProductDto> getProductDetails(@RequestBody long productId) {
 		
-		ProductDto p= product.getById(up.productId());
+		ProductDto p= product.getById(productId);
 		List<String> categories = new ArrayList<String>();
 		
 		for (CategoryModel c:p.categories()) {
@@ -180,36 +186,40 @@ public class WebController {
 		}
 		
 		Message message= new Message.Builder()
-				.productId(up.userId())
+				.productId(productId)
 				.price(p.price())
 				.categories(categories)
 				.amountOfVisits(1L)
 				.build();
-		kafkatemplate.send(topic,up.userId(),message);
+		
+		//kafkatemplate.send(topic,up.userId(),message);
 		
 		return ResponseEntity.ok(p);
 	}
 	
-	@PostMapping("/product/add-to-cart")
-	public ResponseEntity<SimpleResponse> addproductToCart(@RequestBody Long[] ids) {//array[0]-user id array[1]-product id	
-		
+	@PostMapping("/cart/add-product")
+	public ResponseEntity<SimpleResponse> addproductToCart(@RequestBody Product_amount pa) {
 		String message="";
 		boolean success=false;
-		
-		success=cart.addToCart(ids[0], ids[1]);
-		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.isAuthenticated()) {	
+		   var principal = (UserPrincipal) authentication.getPrincipal();
+		   Long userId = principal.getId();
+		   	   
+		   success=cart.addToCart( userId,pa.productId(),pa.amount());
+		}
 		if (success) message="ittem added to cart";
 		else message="error occured while adding ittem to cart";
 		
 		SimpleResponse r = new SimpleResponse(success,message);		
 		return ResponseEntity.ok(r);
 	}
-	@PostMapping("/product/update-amount")
-	public ResponseEntity<Void> updateProductAmountInCart(@RequestBody ItemInCartDto item ){	
-		cart.updateAmount(item.id(),item.amount());	
+	@PostMapping("/cart/update-product-amount")
+	public ResponseEntity<Void> updateProductAmountInCart(@RequestBody Product_amount pa ){	
+		cart.updateAmount(pa.productId(),pa.amount());	
 		return ResponseEntity.ok().build();
 	}
-	@PostMapping("/product/remove")
+	@PostMapping("/cart/remove-product")
 	public ResponseEntity<SimpleResponse> removeProductFromCart(@RequestBody Long id) {	
 		
 		String message="";
@@ -222,7 +232,7 @@ public class WebController {
 		SimpleResponse r = new SimpleResponse(success,message);		
 		return ResponseEntity.ok(r);
 	}
-	@PostMapping("/product/remove-all")
+	@PostMapping("/cart/remove-all")
 	public ResponseEntity<SimpleResponse> removeAllFromCart(@RequestBody Long userId){
 		
 		String message="";
@@ -277,31 +287,80 @@ public class WebController {
 		return ResponseEntity.ok(r);
 	}
 	
-	@PostMapping("/profile")
-	public ResponseEntity<UserDto> getUserprofile(@RequestBody Long id) {
-		UserDto userDto=user.getUserDetails(id);
-		return ResponseEntity.ok(userDto);
+	@GetMapping("/profile")
+	public ResponseEntity<UserDto> getUserprofile() {
+		UserDto profile = null;
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.isAuthenticated()) {		   
+		   var principal = (UserPrincipal) authentication.getPrincipal();
+		   Long userId = principal.getId();
+		   profile = user.getUserDetails(userId);
+		 }
+		return ResponseEntity.ok(profile);
 	}
 	@PostMapping("/profile/edit")
 	public ResponseEntity<SimpleResponse>  editProfile(@RequestBody UserDto userDto) {
 		String message="";
 		boolean success=false;
 		
-		success = user.updateProfile(userDto);
-		
+		if(validateLogin(userDto.login()) && validateEmail(userDto.email())) {
+			try {
+			success = user.updateProfile(userDto);
+			}
+			catch(Exception e) {
+				
+			}
+		}
+			
 		if (success) message="profile updated";
 		else message="something went wrong";
 		SimpleResponse r = new SimpleResponse(success,message);	
 		
 		return ResponseEntity.ok(r);
 	}
-	@PostMapping("/profile/delete")
-	public ResponseEntity<SimpleResponse> deleteProfile(@RequestBody Long id) {
+	
+	@PostMapping("/profile/change-password")
+	public ResponseEntity<SimpleResponse>  changePassword(@RequestBody PasswordDto passwords) {
+		String message="";
+		boolean success=false;
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.isAuthenticated()) {		   
+		   var principal = (UserPrincipal) authentication.getPrincipal();
+		   Long userId = principal.getId();
+		   
+		   if(validatePassword(passwords.password())) {
+				if(passwords.password().equals(passwords.password2())){
+					success = user.changePassword(passwords.password(), userId);
+				}
+			}
+  
+		 }
+			
+		
+		if (success) message="password changed";
+		else message="something went wrong";
+		SimpleResponse r = new SimpleResponse(success,message);	
+		
+		return ResponseEntity.ok(r);
+	}
+	@GetMapping("/profile/delete")
+	public ResponseEntity<SimpleResponse> deleteProfile() {
 
 		String message="";
 		boolean success=false;
 		
-		success = review.removeReview(id);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.isAuthenticated()) {		   
+		   var principal = (UserPrincipal) authentication.getPrincipal();
+		   Long userId = principal.getId();
+		   try {
+		   user.deleteprofile(userId);
+		   }
+		   catch(Exception e) {
+			   
+		   }
+		}
 		
 		if (success) message="profile deleted";
 		else message="something went wrong";
@@ -364,20 +423,37 @@ public class WebController {
 	
 	
 	
-	//for registration of a new user
-	private boolean validateInput(UserRegistrationDto user) {
-		boolean isValid=false;	
-		
-		if(!(user.login().length()<4 ||user.email().isEmpty() || user.password().length()<8)) {			
-			if(!(user.login().length()>20 || user.password().length()>32)) {				
-				if((user.login().matches("^[a-zA-Z0-9._-]+$") 
-						&& user.email().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") 
-						&& user.password().matches("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._-]).*$"))) 
-						{						
-							isValid=true;
-				}			
-			}		
+	private boolean validateLogin(String login) {
+		boolean isValid=false;
+		if(login.length()>4) {
+			if(login.length()<20) {
+				if(login.matches("^[a-zA-Z0-9._-]+$")) {
+					isValid=true;
+				}
+			}
 		}
-		return isValid;		
+		return isValid;	
+	}
+	private boolean validateEmail(String email) {
+		boolean isValid=false;
+		if(!email.isEmpty()) {			
+			if(!email.isBlank()) {				
+				if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+										isValid=true;
+				}
+			}
+		}
+		return isValid;	
+	}
+	private boolean validatePassword(String password) {
+		boolean isValid=false;
+		if(password.length()>8) {
+			if(password.length()<32) {
+				if(password.matches("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._-]).*$")) {				
+						isValid=true;
+				}
+			}
+		}
+		return isValid;	
 	}
 }

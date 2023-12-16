@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
+import com.example.OnlineShop.Database.Dtos.PasswordDto;
 import com.example.OnlineShop.Database.Dtos.UserCheckLoginDto;
 import com.example.OnlineShop.Database.Dtos.UserDto;
 import com.example.OnlineShop.Database.Dtos.UserRegistrationDto;
@@ -45,10 +46,10 @@ public class User implements UserService{
 		user.setEncryptedPassword(encoder.encode(registration.password()));
 		user.setEmail(registration.email());		
 		RoleModel role= roleRepo.findByName("USER").orElse(null);
+		System.out.println(role);
 		user.setRole(role);
 		UserModel result = userRepo.save(user);
 		if (result!=null)isSuccessfull=true;
-			
 		return isSuccessfull;
 	}
 
@@ -59,11 +60,15 @@ public class User implements UserService{
 		UserModel user=userRepo.findById(userEdited.id()).orElse(null);
 		
 		if(user!=null) {
-			if(userEdited.login()!=null) user.setLogin(userEdited.login());
-			if(userEdited.firstName()!=null) user.setFirstName(userEdited.firstName());
-			if(userEdited.lastName()!=null) user.setLastName(userEdited.lastName());
-			if(userEdited.email()!=null) user.setEmail(userEdited.email());
-			if(userEdited.encryptedPassword()!=null) user.setEncryptedPassword(userEdited.encryptedPassword());
+			if(userEdited.login()!=null ||userEdited.login()!="") 
+				user.setLogin(userEdited.login());
+			if(userEdited.firstName()!=null || userEdited.firstName()!="") 
+				user.setFirstName(userEdited.firstName());
+			if(userEdited.lastName()!=null||userEdited.lastName()!="") 
+				user.setLastName(userEdited.lastName());
+			if(userEdited.email()!=null||userEdited.email()!="") 
+				user.setEmail(userEdited.email());
+			
 		
 			UserModel result=userRepo.save(user);
 			if (result!=null)isSuccessfull=true;
@@ -110,6 +115,24 @@ public class User implements UserService{
 	public UserCheckLoginDto getCredentialsbyLogin(String login) {
 		Optional<UserCheckLoginDto> credentilas=userRepo.findLoginDtoByLogin(login);
 		return credentilas.orElse(null);
+	}
+
+	@Override
+	public boolean changePassword(String password, Long id) {
+		boolean success=false;
+		
+		UserModel user=userRepo.findById(id).orElse(null);
+		
+		if(user!=null) {
+			
+			user.setEncryptedPassword(encoder.encode(password));
+		
+			UserModel result=userRepo.save(user);
+			if (result!=null)success=true;
+		}
+		
+		
+		return success;
 	}
 	
 	

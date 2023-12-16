@@ -9,7 +9,6 @@ export default function Home(props) {
   const [filterValue, setFilterParams] = useState({
     min:null,
     max:null, 
-    category:null,
     name:null,
     offset:0
   });
@@ -22,6 +21,7 @@ export default function Home(props) {
     offset:0,
     limit:10
   });
+  const [category, setCategory] = useState(null);
   const handleFilterChange = (param, value) => {
     setFilterParams((prevParams) => ({
       ...prevParams,
@@ -35,7 +35,7 @@ export default function Home(props) {
     setPostFilterData(() => ({
       ['minPrice']: filterValue.min,
       ['maxPrice']: filterValue.max,
-      ['category']: filterValue.category,
+      ['category']: category,
       ['name']: filterValue.name,
       ['offset']: filterValue.offset
     }))
@@ -62,17 +62,17 @@ export default function Home(props) {
     })
     )
   };
-
+  
     return (    
           <div>
-            <Topbar isLogged={props.islogged} setLogged={props.setLogged}/>
+            <Topbar parent='home'/>
             <div className='clearfix'></div>
             <Filter onFilterChange={ handleFilterChange } onConfirm={handleConfirm} onClear={clearFilter} count={filterCount} changepage={setPostFilterData} />
             <div className='clearfix'></div>
             
-            <LeftBar onFilterChange={ handleFilterChange }/>
+            <LeftBar onFilterChange={ handleFilterChange } onCategoryChange={setCategory} />
             
-            <HomePageContent filter={postFilterData} handleCount={handleCountChange}/>
+            <HomePageContent filter={postFilterData} handleCount={handleCountChange} category={category} onConfirm={handleConfirm}/>
             <div className='clearfix'></div>
           </div>
         
