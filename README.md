@@ -76,5 +76,11 @@ Backend:
 Frontend:
 <ul>
   <li>Java Script</li>
-  <li> React</li>
+  <li>React</li>
+</ul>
+
+<h4>Next Steps:</h4>
+<ul>
+  <li>creating a storage for all preview images for available products that will be displayed to the customers</li>
+  <li>processing the collected customers' logs using a classification algorithm to learn about each customer's preferences, give them   personalized offers, and adds</li>
 </ul>
