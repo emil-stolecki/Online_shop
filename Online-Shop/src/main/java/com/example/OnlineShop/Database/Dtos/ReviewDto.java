@@ -34,11 +34,11 @@ public record ReviewDto(Long id,
             this.userName = userName;
             return this;
         }
-		public Builder product(Long productId) {
+		public Builder productId(Long productId) {
             this.productId = productId;
             return this;
         }
-		public Builder product(String productName) {
+		public Builder productName(String productName) {
             this.productName = productName;
             return this;
         }

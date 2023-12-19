@@ -1,13 +1,14 @@
 import Topbar from '../components/TopBar';
 import CartTile from '../components/CartTile';
 import React, {useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 export default function Cart(props) {
   const [data, setData] = useState([]);
   const [error, setError] = useState([]);
   const [totalCost,setTotalcost] = useState(0);
 
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,6 +31,7 @@ export default function Cart(props) {
   function remove_item(item_id){
     setData(data.filter(i => i.id!==item_id))
   }
+  
     return (    
           <div className='cart'>
             <Topbar parent='cart'/>
@@ -42,7 +44,7 @@ export default function Cart(props) {
             {data.length>0&&
             <div>
               <h2>Razem: {totalCost.toFixed(2)}</h2>
-              <button className='checkout'>Do kasy</button>
+              <button className='checkout' onClick={navigate('/checkout')}>Do kasy</button>
               </div>
             }
             {data.length==0&&<p>Trochę tu pusto</p>}

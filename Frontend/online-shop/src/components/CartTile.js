@@ -31,6 +31,7 @@ export default function ProductPreviewTile(props) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           },});
+          
         setData(response.data);
       } catch (error) {
         setError(error.message);

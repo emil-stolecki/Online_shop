@@ -31,5 +31,5 @@ public interface ReviewRepository extends JpaRepository<ReviewModel,Long>{
 			+ "FROM reviews r WHERE r.product.id = :id AND r.rating BETWEEN :minRating AND :maxRating")
 	List<ReviewDto> findDtoByProduct_idAndRatingBetween(Long id, int minRating, int maxRating);
 	
-	//void deleteById(Long id);
+
 }

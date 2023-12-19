@@ -24,6 +24,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.OnlineShop.Database.Dtos.AuthenticatedUserDto;
 import com.example.OnlineShop.Database.Dtos.CategoryDto;
 import com.example.OnlineShop.Database.Dtos.ItemInCartDto;
+import com.example.OnlineShop.Database.Dtos.NewReviewDto;
 import com.example.OnlineShop.Database.Dtos.PasswordDto;
 import com.example.OnlineShop.Database.Dtos.ProductDto;
 import com.example.OnlineShop.Database.Dtos.ProductLessDto;
@@ -99,11 +100,13 @@ public class WebController {
 			 	success = true;
 			 	SecurityContextHolder.getContext().setAuthentication(authentication);
 			 	var principal = (UserPrincipal) authentication.getPrincipal();
-
+			 	System.out.println(principal.getId());
+			 	
 			 	token =jwtIssuer.issue(
 			 			principal.getId(),
 			 			principal.getUsername(),
 			 			principal.getAuthorities());
+			 	id=principal.getId();
 		}catch(Exception e) {
 			success=false;
 			e.printStackTrace();
@@ -180,11 +183,11 @@ public class WebController {
 		
 		ProductDto p= product.getById(productId);
 		List<String> categories = new ArrayList<String>();
-		
 		for (CategoryModel c:p.categories()) {
 			categories.add(c.getName());
 		}
-		
+		System.out.println(p.reviews());
+	
 		Message message= new Message.Builder()
 				.productId(productId)
 				.price(p.price())
@@ -232,40 +235,51 @@ public class WebController {
 		SimpleResponse r = new SimpleResponse(success,message);		
 		return ResponseEntity.ok(r);
 	}
-	@PostMapping("/cart/remove-all")
-	public ResponseEntity<SimpleResponse> removeAllFromCart(@RequestBody Long userId){
-		
-		String message="";
-		boolean success=false;
-		
-		success=cart.removeAll(userId);
-		
-		if (success) message="ittem removed";
-		else message="error occured while removing ittem from cart";
-		SimpleResponse r = new SimpleResponse(success,message);		
-		return ResponseEntity.ok(r);
-	}
 	
-	@PostMapping("/product/review")
-	public ResponseEntity<SimpleResponse> addProductReview(@RequestBody ReviewDto rev) {
+	@PostMapping("/product/review-add")
+	public ResponseEntity<ReviewDto> addProductReview(@RequestBody NewReviewDto newReview) {
 		
-		String message="";
-		boolean success=false;
-		
-		success = review.addReview(rev);
-		
-		if (success) message="review added";
-		else message="something went wrong";
-		SimpleResponse r = new SimpleResponse(success,message);	
-		
-		return ResponseEntity.ok(r);
+
+		ReviewDto addedreview=null;
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.isAuthenticated()) {	
+		   var principal = (UserPrincipal) authentication.getPrincipal();
+		   Long userId = principal.getId();
+		   ReviewDto rev=new ReviewDto.Builder()
+					.userId(userId)
+					.productId(newReview.productId())
+					.rating(newReview.rating())
+					.content(newReview.content())
+					.build();
+		   addedreview = review.addReview(rev);   
+
+		}
+	
+		return ResponseEntity.ok(addedreview);
 	}
 	@PostMapping("/product/review/edit")
-	public ResponseEntity<SimpleResponse> editProductReview(@RequestBody ReviewDto rev) {
-		String message="";
-		boolean success=false;
+	public ResponseEntity<SimpleResponse> editProductReview(@RequestBody ReviewDto reviewDto) {
 		
-		success = review.editReview(rev);
+		String message="";
+		boolean success=false;		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (authentication != null && authentication.isAuthenticated()) {	
+			
+			var principal = (UserPrincipal) authentication.getPrincipal();
+			   Long userId = principal.getId();
+			   ReviewDto rev=new ReviewDto.Builder()
+					    .id(reviewDto.id())
+						.userId(userId)
+						.productId(reviewDto.productId())
+						.rating(reviewDto.rating())
+						.content(reviewDto.content())
+						.build();
+			
+			
+			success = review.editReview(rev);
+		}
+		
 		
 		if (success) message="review edited";
 		else message="something went wrong";
@@ -356,6 +370,7 @@ public class WebController {
 		   Long userId = principal.getId();
 		   try {
 		   user.deleteprofile(userId);
+		   success=true;
 		   }
 		   catch(Exception e) {
 			   
@@ -385,22 +400,32 @@ public class WebController {
 		return ResponseEntity.ok(items);
 	}
 	
-	@PostMapping("/checkout")
-	public ResponseEntity<SimpleResponse> getPayment(Long userId) {
+	@GetMapping("/checkout")
+	public ResponseEntity<SimpleResponse> getPayment() {
 		String message="";
 		boolean success=false;
 		//We assume the user bought all products in cart
 		
-		List<ItemInCartDto> items=cart.getProducts(userId);		
-		
-		for(ItemInCartDto i : items) {
-			Message log= new Message.Builder()
-					.productId(i.id())
-					.price(i.price())
-					.amountBought(i.amount())
-					.build();
-			kafkatemplate.send(topic,userId,log);
-		}
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		List<ItemInCartDto> items=null;
+		if (authentication != null && authentication.isAuthenticated()) {		   
+		   var principal = (UserPrincipal) authentication.getPrincipal();
+		   Long userId = principal.getId();
+		   
+		   items=cart.getProducts(userId);
+		   
+		   for(ItemInCartDto i : items) {
+			   
+				Message log= new Message.Builder()
+						.productId(i.id())
+						.price(i.price())
+						.amountBought(i.amount())
+						.build();
+				kafkatemplate.send(topic,userId,log);
+				
+			}
+		   success=true;
+		 }
 		
 		if (success) message="items bought";
 		else message="something went wrong";
@@ -411,10 +436,10 @@ public class WebController {
 	
 	@PostMapping("/check-token")
 	public ResponseEntity<Boolean> logout(@RequestBody String token) {
-		System.out.println(token);
 		Boolean response=null;
 		try {			
 			response = decoder.checkExpired(token);
+			response=true;
 		}catch(Exception e) {			
 			response =false;
 		}

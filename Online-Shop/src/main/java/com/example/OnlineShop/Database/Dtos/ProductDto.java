@@ -2,6 +2,7 @@ package com.example.OnlineShop.Database.Dtos;
 
 import java.util.List;
 
+import com.example.OnlineShop.Database.Dtos.ReviewDto.Builder;
 import com.example.OnlineShop.Database.Models.CategoryModel;
 import com.example.OnlineShop.Database.Models.PreviewImageModel;
 import com.example.OnlineShop.Database.Models.ReviewModel;
@@ -15,6 +16,7 @@ public record ProductDto(Long id,
 						List<CategoryModel> categories,
 						List<PreviewImageModel> images,
 						List<ReviewDto> reviews) {
-
+	
+	
 	
 }

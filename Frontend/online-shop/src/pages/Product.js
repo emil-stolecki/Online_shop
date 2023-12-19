@@ -2,6 +2,7 @@ import React, {useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Topbar from '../components/TopBar';
 import Review from '../components/Review';
+import Star from '../components/Star';
 import axios from 'axios';
 import missingImage from '../images/missing_image_tile.png';
 
@@ -10,13 +11,23 @@ export default function Product(props) {
   const [data, setData] = useState([]);
   const [error, setError] = useState([]);
   const [newReview,setNewReview]=useState(null)
+  const [OldReviewId,setOldReviewId]=useState(null)
   const [quantity,setQuantity]=useState(1);
+  const [reviewError,setReviewError]=useState(null)
+  const [stars,setStars]=useState(0)
 
   const location = useLocation();
-  
   const searchParams = new URLSearchParams(location.search);
-
   const id = searchParams.get('id');
+
+  const normal_style={
+    color: '#00236a'
+  }
+  const too_much_words_style={
+    color: '#a85032'
+  }
+  
+  const [textareaStyle,setStyle]=useState(normal_style)
   
   useEffect(() => {
     document.body.style.cursor = 'wait'  
@@ -25,8 +36,17 @@ export default function Product(props) {
         const response = await axios.post('http://localhost:8081/product',id,{headers: {
           'Content-Type': 'application/json',
         }});
+        console.log(response.data.reviews)
         setData(response.data);
-        console.log(response.data)
+        
+        const d = response.data.reviews.forEach(obj => {         
+          if(obj.userId == localStorage.getItem('id')){
+            setNewReview(obj.content)
+            setStars(obj.rating)   
+            setOldReviewId(obj.id)        
+          }
+      })
+
       } catch (error) {
         setError(error.message);
       }
@@ -51,8 +71,6 @@ export default function Product(props) {
         let f=feature.split(':')
         left_features.push(f[0])
         right_features.push(f[1])
-        
-
       })
       }
   }
@@ -67,20 +85,20 @@ export default function Product(props) {
     if(quantity>1){
       setQuantity(quantity-1)
     }
-  }
-  
-  function get_reviews(){
-    if(data!=null){
+  } 
+ 
+ function get_reviews(){
+    if(data!=null){     
       if(data.reviews!=undefined){
         if(data.reviews.length>0){
           let rating=data.reviews.reduce(
             (accumulator, currentValue) => accumulator + currentValue.rating,0);
           return(<div>
-            <p>oceniane na: {(rating/data.reviews.length).toFixed(2)}
-            </p>
+            <p>oceniane na: {(rating/data.reviews.length).toFixed(2)} </p>
             <ul>
             {data.reviews.map((review)=>(
-              <li><Review user={review.userName} content={review.content} rating={review.rating}/></li>
+              <li><Review user={review.userName} content={review.content} rating={review.rating} 
+               id={review.id} onRemove={remove_review}/></li>
             ))}
             </ul>
           </div>)
@@ -102,18 +120,109 @@ export default function Product(props) {
     else{
       return(
         <div>
-          <textarea name="new_review" value={newReview} onChange={handleChange}></textarea>
-          <button onClick={handleSubmitReview}>Dodaj</button>
+          <div >
+           <Star id={1} setStars={setStars} rating={stars}/>
+           <Star id={2} setStars={setStars} rating={stars}/>
+           <Star id={3} setStars={setStars} rating={stars}/>
+           <Star id={4} setStars={setStars} rating={stars}/>
+           <Star id={5} setStars={setStars} rating={stars}/>
+           <Star id={6} setStars={setStars} rating={stars}/>
+           <Star id={7} setStars={setStars} rating={stars}/>
+           <Star id={8} setStars={setStars} rating={stars}/>
+           <Star id={9} setStars={setStars} rating={stars}/>
+           <Star id={10} setStars={setStars} rating={stars}/>
+          </div>
+          <div className='clearfix'></div>
+          <textarea placeholder='max. 500 znaków' name="new_review" value={newReview} onChange={handleChange} style={textareaStyle}></textarea>
+          {reviewError&&<p>{reviewError}</p>}
+          {OldReviewId&&<button onClick={handleEditReview}>Aktualizuj</button>}
+          {!OldReviewId&&<button onClick={handleSubmitReview}>Dodaj</button>}
         </div>
       )
     }
-    
   }
   const handleChange = (e) => {
     setNewReview(e.target.value);
+    if(e.target.value.length>500){
+      setStyle(too_much_words_style)
+    }
+    else{
+      setStyle(normal_style)
+    }
   };
-  function handleSubmitReview() {
-    //////TODO
+  async function handleEditReview(){
+    
+    const body={
+      id:OldReviewId,
+      userId:0,
+      userName:'',
+      productId:id,
+      productName:'',
+      rating:stars,
+      content:newReview
+    }
+    document.body.style.cursor = 'wait'  
+    try {
+      const response = await axios.post('http://localhost:8081/product/review/edit',body,{headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }});
+      
+      const newReviews = data.reviews.map(obj => {
+        if (obj.id === OldReviewId) {
+          obj.content = newReview;
+          obj.rating = stars;
+        }
+        return obj;
+      });
+      const newData=data
+      newData.reviews=newReviews
+      setData(newData)
+
+      
+    } catch (error) {
+      setError(error.message);
+    } 
+    document.body.style.cursor = 'default'
+  }
+  function remove_review(){
+    const newReviews = data.reviews.filter(obj => !(obj.id === OldReviewId))  
+    const newData=data
+    newData.reviews=newReviews
+    setData(newData)
+    setOldReviewId(null)
+  }
+  async function handleSubmitReview() {
+    if(newReview.length<=500 && newReview.length>0){
+     const body={
+        productId:id,
+        rating:stars,
+        content:newReview
+      }
+      document.body.style.cursor = 'wait'  
+      try {
+        const response = await axios.post('http://localhost:8081/product/review-add',body,{headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }});
+
+        const currentData=data
+        currentData.reviews.push(response.data)
+        setOldReviewId(response.data.id)
+
+        setData(currentData)
+      } catch (error) {
+        setError(error.message);
+      } 
+    document.body.style.cursor = 'default'
+
+    }    
+    else if (newReview.length>500){
+      setReviewError("Przekroczono dozwoloną liczbę znaków")
+    }
+    else{
+      setReviewError("Pole nie zawiera tekstu")
+    }
   };
   async function add_to_cart(){
     document.body.style.cursor = 'wait'  

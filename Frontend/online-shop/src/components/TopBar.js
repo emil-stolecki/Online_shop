@@ -47,8 +47,9 @@ export default function TopBar(props) {
         )
     }
   }
-    return (    
+    return (             
           <div className="topbar">
+            <div onClick={()=>{navigate('/home')}} className='invisible-button'></div>
             <h1>Online-Shop</h1>
             <div className="register-login-profile">
               {get_view_for_logged_or_not()}

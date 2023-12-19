@@ -23,16 +23,14 @@ export default function Login(props) {
       e.preventDefault();  
       document.body.style.cursor = 'wait'  
       try {
-        console.log(formData)
         const response = await axios.post('http://localhost:8081/login',formData,{withCredentials: true,headers: {
           'Content-Type': 'application/json',
         },});
         setData(response.data);
         if(response.data.successfull){
           localStorage.setItem('token',response.data.token)
-          localStorage.setItem('id',response.data.userId)
-          console.log('logged in');
-          navigate('/home');
+          localStorage.setItem('id',response.data.id)
+          navigate('/home')
         }
               
       } catch (error) {

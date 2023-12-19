@@ -24,9 +24,7 @@ public class DataInitializer {
 
 	
 	//for presentation purposes, the application needs some users
-	//Adding them this way ensures that all fields are filled correctly as opposed to 
-	//initiating from file.sql
-	//products are initialized from file they don't have complicated constrains with other tables
+	//Adding them this way ensures that all fields are filled correctly
 	
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;

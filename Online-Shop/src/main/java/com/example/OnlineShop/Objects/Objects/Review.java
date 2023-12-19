@@ -27,10 +27,9 @@ public class Review implements ReviewService{
 	}
 	
 	@Override
-	public boolean addReview(ReviewDto reviewDto) {
+	public ReviewDto addReview(ReviewDto reviewDto) {
 		
-		boolean isSuccessfull=false;
-		
+		ReviewDto response=null;
 		ReviewModel review=new ReviewModel();
 		review.setUser(userRepo.findById(reviewDto.userId()).orElse(null));
 		review.setProduct(productRepo.findById(reviewDto.productId()).orElse(null));
@@ -41,28 +40,36 @@ public class Review implements ReviewService{
 		if (review.getUser()!=null&&review.getProduct()!=null) {
 			ReviewModel result =reviewRepo.save(review);
 		
-			if (result!=null) isSuccessfull=true;
+			if (result!=null) {
+				response= new ReviewDto.Builder()
+						.id(result.getId())
+						.userId(result.getUser().getId())
+						.productId(0l)
+						.userName(result.getUser().getLogin())
+						.productName(null)
+						.content(result.getContent())
+						.rating(result.getRating())
+						.build();
+			}
 		}
-		return isSuccessfull;
+		return response;
 	}
 
 	@Override
 	public boolean editReview(ReviewDto reviewDto) {
 		boolean isSuccessfull=false;
 		
-		ReviewModel review=new ReviewModel();
-		review.setId(reviewDto.id());
-		review.setUser(userRepo.findById(reviewDto.userId()).orElse(null));
-		review.setProduct(productRepo.findById(reviewDto.productId()).orElse(null));
+		ReviewModel review=reviewRepo.findById(reviewDto.id()).orElse(null);
 		
-		review.setRating(reviewDto.rating());
-		review.setContent(reviewDto.content());
-		
-		if (review.getUser()!=null&&review.getProduct()!=null) {
+		if (review!=null) {
+			
+			review.setRating(reviewDto.rating());
+			review.setContent(reviewDto.content());
+
 			ReviewModel result =reviewRepo.save(review);
 			if (result!=null) isSuccessfull=true;
 		}
-
+		
 		return isSuccessfull;
 	}
 
@@ -82,8 +89,8 @@ public class Review implements ReviewService{
 
 	@Override
 	public List<ReviewDto> getReviewsForProduct(Long productId) {
-		// TODO Auto-generated method stub
-		return null;
+		List<ReviewDto> list=reviewRepo.findDtoByProduct_id(productId);
+		return list;
 	}
 
 	@Override

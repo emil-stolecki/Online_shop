@@ -12,7 +12,6 @@ export default function HomePageContent(props) {
             const response = await axios.get('http://localhost:8081/home');
             setData(response.data);
             
-            console.log(response.data)
             
           } catch (error) {
             setError(error.message);
@@ -27,12 +26,11 @@ export default function HomePageContent(props) {
             try {
               const response = await axios.post('http://localhost:8081/filter', props.filter,{withCredentials: true,});
               setData(response.data);
-              console.log(response.data)
+
              
                 const response2 = await axios.post('http://localhost:8081/filter/count', props.filter,{withCredentials: true,});
                 props.handleCount(response2.data)
-                console.log("count")
-                console.log(response2.data)
+
               
              
             } catch (error) {

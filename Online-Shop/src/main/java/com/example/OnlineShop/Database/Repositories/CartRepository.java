@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,6 +26,6 @@ public interface CartRepository extends JpaRepository<ItemInCartModel,Long>{
 	Optional<ItemInCartModel> findById(Long id);
 	Optional<ItemInCartModel> findByUser_idAndProduct_id(Long userid, Long productid);
 	
-	void removeByUser_id(Long userId);
-	
+
+
 }

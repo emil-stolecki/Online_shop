@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Size;
 
 /*
  * This table stores reviews
@@ -24,18 +25,19 @@ public class ReviewModel {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id",referencedColumnName="id")
 	@JsonManagedReference
 	private UserModel user;
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="product_id",referencedColumnName="id")
 	@JsonManagedReference
 	private ProductModel product;
 	
 	
 	private int rating;//0-10
+	@Size(max =500)
 	private String content;
 	
 	

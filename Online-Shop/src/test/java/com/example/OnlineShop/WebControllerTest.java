@@ -146,7 +146,7 @@ public class WebControllerTest {
 		
 		ReviewDto rev = new ReviewDto.Builder()
 				.userId(1L)
-				.product(30L)
+				.productId(30L)
 				.rating(8)
 				.content("very good")
 				.build();
@@ -170,7 +170,7 @@ public class WebControllerTest {
 		ReviewDto rev = new ReviewDto.Builder()
 				.id(1L)
 				.userId(3L)
-				.product(30L)
+				.productId(30L)
 				.rating(8)
 				.content("very good")
 				.build();

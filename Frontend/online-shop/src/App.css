@@ -359,3 +359,63 @@ float:left
   margin-bottom: 5px;
   font-size: 15px;
 }
+.invisible-button{
+  background-color: transparent;
+  position: inherit;
+  left:35vw;
+  width: 30vw;
+  height: 12vh;
+}
+
+.reviews textarea{
+  background-color: #9adac4;
+  color: #00236a;
+  font-size: 16px;
+  width: 35vw;
+  height:15vh
+}
+.star{
+  width: 25px;
+}
+ol{
+  text-align: left;
+}
+.receipt b{
+  float: right;
+  margin-right: 20px;
+}
+.receipt{
+  background-color: #516378;
+  width: 75vw;
+  min-height: 50vh;
+  margin-left: 20px;
+  margin-top: 30px;
+  position: relative;
+}
+.pay{
+  background-color: #0cbab4;
+  padding: 10px 20px;
+  font-size: 40px;
+  margin-top: 10px;
+  margin-right: 0px;
+  float: right;
+  
+
+}
+.line2{
+  width: 75vw;
+  height: 2px;
+  background-color: rgb(107, 118, 125);
+  float: left;
+  margin-top: 10px;
+}
+
+.receipt h2{
+  text-align: right;
+  margin-right: 20px;
+}
+.float-bottom{
+  position:absolute;
+  bottom: 0;
+  right: 0;
+}

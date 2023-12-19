@@ -87,16 +87,6 @@ public class Cart implements CartService{
 		return list;
 	}
 
-	@Override
-	public boolean removeAll(Long userId) {
-		boolean isSuccessfull=false;
-		try {
-			cartRepo.removeByUser_id(userId);
-			isSuccessfull=true;
-		} catch (Exception e) {		       
-	        e.printStackTrace(); 
-	    }
-		return isSuccessfull;
-	}
+	
 
 }

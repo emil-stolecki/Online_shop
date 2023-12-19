@@ -12,6 +12,5 @@ public interface CartService {
 	boolean removeFromCart(Long id);
 	boolean updateAmount(Long id,int amount);
 	List<ItemInCartDto> getProducts(Long userId);
-	boolean removeAll(Long userId);
 	
 }

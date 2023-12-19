@@ -12,7 +12,6 @@ public interface ProductService {
 	
 	ProductDto getById(Long id);
 	List<ProductLessDto> getByCategoryandFilter(Filter filter);
-	List<ProductLessDto> getByName(String name);
 	List<ProductLessDto> getPopular();
 	
 	List<CategoryDto> getCategories();
