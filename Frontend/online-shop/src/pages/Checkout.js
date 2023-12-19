@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import Topbar from '../components/TopBar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 export default function Checkout() {
@@ -42,6 +43,7 @@ async function pay(){
 }
     return (    
           <div>
+            <Topbar parent='cart'/>
             <div style={{width:'76vw'}}>
             <div className='receipt'>
             <ol>
