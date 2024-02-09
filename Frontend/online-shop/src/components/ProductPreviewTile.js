@@ -10,7 +10,6 @@ export default function ProductPreviewTile(props) {
     const productId = encodeURIComponent(props.id);
 
     const url = `/product?name=${productName}&id=${productId}`;
-    console.log(url)
     navigate(url); 
   };
 
